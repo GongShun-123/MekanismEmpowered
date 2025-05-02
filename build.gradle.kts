@@ -438,22 +438,27 @@ idea {
     }
 }
 
-publishing {
-    publications {
-        register<MavenPublication>("maven") {
-            from(components["java"])
-            version = "$mcVersion-${project.version}"
-            setArtifacts(listOf(tasks["jar"], tasks["sourcesJar"], tasks["apiJar"], tasks["coreJar"], tasks["coreApiJar"]))
+run {
+    val r2AccessKey = project.findProperty("r2_access_key") ?: System.getenv("R2_ACCESS_KEY") ?: return@run
+    val r2SecretKey = project.findProperty("r2_secret_key") ?: System.getenv("R2_SECRET_KEY") ?: return@run
+
+    publishing {
+        publications {
+            register<MavenPublication>("maven") {
+                from(components["java"])
+                version = "$mcVersion-${project.version}"
+                setArtifacts(listOf(tasks["jar"], tasks["sourcesJar"], tasks["apiJar"], tasks["coreJar"], tasks["coreApiJar"]))
+            }
         }
-    }
-    repositories {
-        mavenLocal()
-        maven {
-            name = "R2"
-            url = uri("s3://maven")
-            credentials(AwsCredentials::class) {
-                accessKey = (project.findProperty("r2_access_key") ?: System.getenv("R2_ACCESS_KEY") ?: error("R2 access key is missing.")).toString()
-                secretKey = (project.findProperty("r2_secret_key") ?: System.getenv("R2_SECRET_KEY") ?: error("R2 secret key is missing.")).toString()
+        repositories {
+            mavenLocal()
+            maven {
+                name = "R2"
+                url = uri("s3://maven")
+                credentials(AwsCredentials::class) {
+                    accessKey = r2AccessKey.toString()
+                    secretKey = r2SecretKey.toString()
+                }
             }
         }
     }
