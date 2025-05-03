@@ -27,7 +27,7 @@ object MixinImplMekanismUtils {
     @JvmStatic
     fun IUpgradeTile.modifyEnergyPerTick(original: Double): Double {
         val speed = getInstalledOrDefault(MekEmpUpgrade.EMPOWERED_SPEED)
-        if (!isSpeedMaxed() || !isEnergyMaxed() || speed <= 0) {
+        if (!isSpeedMaxed() || speed <= 0) {
             return original
         }
         val energy = getInstalledOrDefault(MekEmpUpgrade.EMPOWERED_ENERGY)
