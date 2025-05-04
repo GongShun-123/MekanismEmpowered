@@ -170,9 +170,10 @@ neoForge {
 
     validateAccessTransformers = true
 
-    file("src/main/resources/META-INF/accesstransformer.cfg").takeIf(File::exists)?.let {
-        println("Adding access transformer: $it")
-        setAccessTransformers(it)
+    accessTransformers {
+        val atFile = rootProject.file("src/core/resources/META-INF/accesstransformer.cfg").takeIf(File::exists) ?: return@accessTransformers
+        from(atFile)
+        publish(atFile)
     }
 
     parchment {
@@ -305,8 +306,8 @@ val mainModDependencies = baseDependencies.toMutableList().apply {
     add(ModDep("mekanism_unleashed", "0.0.0", type = DependencyType.INCOMPATIBLE, reason = "Because Advanced Speed Upgrade becomes meaningless"))
 }
 
-setupMetaDataTask(modId, Constants.Mod.NAME, generateModMetadata, mainModDependencies, at = "accesstransformer.cfg")
-setupMetaDataTask("${modId}_core", "${Constants.Mod.NAME} Core", generateCoreModMetadata, baseDependencies)
+setupMetaDataTask(modId, Constants.Mod.NAME, generateModMetadata, mainModDependencies)
+setupMetaDataTask("${modId}_core", "${Constants.Mod.NAME} Core", generateCoreModMetadata, baseDependencies, at = "accesstransformer.cfg")
 
 tasks {
     withType<JavaCompile> {
@@ -447,7 +448,12 @@ run {
             register<MavenPublication>("maven") {
                 from(components["java"])
                 version = "$mcVersion-${project.version}"
+
                 setArtifacts(listOf(tasks["jar"], tasks["sourcesJar"], tasks["apiJar"], tasks["coreJar"], tasks["coreApiJar"]))
+                artifact(layout.buildDirectory.file("copyAccessTransformersPublications/0-accesstransformer.cfg")) {
+                    classifier = "accesstransformer"
+                    extension = "cfg"
+                }
             }
         }
         repositories {

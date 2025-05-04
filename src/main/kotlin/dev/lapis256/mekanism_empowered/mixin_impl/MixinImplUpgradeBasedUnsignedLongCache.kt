@@ -1,7 +1,7 @@
 package dev.lapis256.mekanism_empowered.mixin_impl
 
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
-import dev.lapis256.mekanism_empowered.common.config.GeneralConfig
+import dev.lapis256.mekanism_empowered.common.config.MekEmpGeneralConfig
 import mekanism.api.math.MathUtils
 import mekanism.common.attachments.component.UpgradeAware
 import kotlin.math.pow
@@ -19,7 +19,7 @@ class MixinImplUpgradeBasedUnsignedLongCache {
 
         if (lastEmpoweredInstalled != empoweredInstalled) {
             lastEmpoweredInstalled = empoweredInstalled
-            value = MathUtils.clampToLong(base * GeneralConfig.maxUpgradeMultiplier.toDouble().pow(empoweredInstalled / MekEmpUpgrade.EMPOWERED_ENERGY.max.toDouble()))
+            value = MathUtils.clampToLong(base * MekEmpGeneralConfig.maxUpgradeMultiplier.toDouble().pow(empoweredInstalled / MekEmpUpgrade.EMPOWERED_ENERGY.max.toDouble()))
         }
 
         return value

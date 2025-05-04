@@ -1,7 +1,7 @@
 package dev.lapis256.mekanism_empowered.mixin_impl
 
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
-import dev.lapis256.mekanism_empowered.common.config.GeneralConfig
+import dev.lapis256.mekanism_empowered.common.config.MekEmpGeneralConfig
 import dev.lapis256.mekanism_empowered.core.extension.fractionUpgrades
 import dev.lapis256.mekanism_empowered.core.extension.getInstalledOrDefault
 import dev.lapis256.mekanism_empowered.core.extension.isEnergyMaxed
@@ -14,7 +14,7 @@ import kotlin.math.pow
 
 object MixinImplMekanismUtils {
     private val multiplier: Double
-        get() = GeneralConfig.maxUpgradeMultiplier.toDouble()
+        get() = MekEmpGeneralConfig.maxUpgradeMultiplier.toDouble()
 
     @JvmStatic
     fun IUpgradeTile.modifyTicks(original: Double): Double {

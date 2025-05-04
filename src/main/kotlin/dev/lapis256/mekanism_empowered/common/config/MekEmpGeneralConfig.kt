@@ -5,7 +5,7 @@ import dev.lapis256.mekanism_empowered.core.common.config.MekanismNestConfig
 import net.neoforged.fml.config.ModConfig
 
 
-object GeneralConfig : MekanismNestConfig(ModConfig.Type.SERVER, "general") {
+object MekEmpGeneralConfig : MekanismNestConfig(ModConfig.Type.SERVER, "general") {
     val maxUpgradeMultiplier by MekEmpConfigTranslations.GENERAL_UPGRADE_MULTIPLIER.applyToBuilder(builder)
         .defineInRange("maxUpgradeMultiplier", 20, 1, Int.MAX_VALUE).cached()
 

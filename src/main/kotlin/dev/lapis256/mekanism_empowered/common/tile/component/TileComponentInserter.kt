@@ -2,7 +2,7 @@ package dev.lapis256.mekanism_empowered.common.tile.component
 
 import dev.lapis256.mekanism_empowered.api.MekEmpSerializationConstants
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
-import dev.lapis256.mekanism_empowered.common.config.GeneralConfig
+import dev.lapis256.mekanism_empowered.common.config.MekEmpGeneralConfig
 import dev.lapis256.mekanism_empowered.core.common.util.WrappedCapabilityCache
 import dev.lapis256.mekanism_empowered.core.extension.canInput
 import dev.lapis256.mekanism_empowered.core.extension.getInstalledOrDefault
@@ -190,9 +190,9 @@ class TileComponentInserter(private val tile: TileEntityConfigurableMachine) : I
     private fun buildIOCapacities() = buildMap {
         val installed = tile.getInstalledOrDefault(MekEmpUpgrade.IO_CAPACITY)
         val max = MekEmpUpgrade.IO_CAPACITY.max.toDouble()
-        put(TransmissionType.ITEM, MathUtils.clampToLong(GeneralConfig.AutoInsert.itemRate * 8.0.pow(installed / max)))
-        put(TransmissionType.CHEMICAL, MathUtils.clampToLong(GeneralConfig.AutoInsert.chemicalRate * (1 + 32 * (installed / max))))
-        put(TransmissionType.FLUID, MathUtils.clampToLong(GeneralConfig.AutoInsert.fluidRate * (1 + 32 * (installed / max))))
-        put(TransmissionType.ENERGY, MathUtils.clampToLong(GeneralConfig.AutoInsert.energyRate * (1 + 32 * (installed / max))))
+        put(TransmissionType.ITEM, MathUtils.clampToLong(MekEmpGeneralConfig.AutoInsert.itemRate * 8.0.pow(installed / max)))
+        put(TransmissionType.CHEMICAL, MathUtils.clampToLong(MekEmpGeneralConfig.AutoInsert.chemicalRate * (1 + 32 * (installed / max))))
+        put(TransmissionType.FLUID, MathUtils.clampToLong(MekEmpGeneralConfig.AutoInsert.fluidRate * (1 + 32 * (installed / max))))
+        put(TransmissionType.ENERGY, MathUtils.clampToLong(MekEmpGeneralConfig.AutoInsert.energyRate * (1 + 32 * (installed / max))))
     }
 }
