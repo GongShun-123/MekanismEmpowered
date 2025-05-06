@@ -1,12 +1,11 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.darkhax.curseforgegradle.UploadArtifact
-import net.darkhax.curseforgegradle.Constants as CFGConstants
 import net.neoforged.moddevgradle.internal.RunGameTask
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.kotlin.dsl.register
 import org.slf4j.event.Level
 import java.text.SimpleDateFormat
 import java.util.*
+import net.darkhax.curseforgegradle.Constants as CFGConstants
 
 
 plugins {
@@ -33,7 +32,7 @@ val jvmVendor = Constants.Dev.JVM_VENDOR
 
 
 val exportMixin = true
-val loadMekExt = true
+val loadMekExt = false
 
 
 base {
@@ -150,9 +149,9 @@ dependencies {
 
     localRuntime(libs.jei)
 
-//    if (loadMekExt) {
-//        localRuntime(libs.mekanismExtras)
-//    }
+    if (loadMekExt) {
+        localRuntime(libs.mekanismExtras)
+    }
 
     implementation(libs.easyNestConfig)
 
@@ -302,7 +301,7 @@ val baseDependencies = listOf(
 )
 val mainModDependencies = baseDependencies.toMutableList().apply {
     add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION, type = DependencyType.OPTIONAL, ordering = Order.AFTER))
-//    add(ModDep("mekanism_extras", "1.21.1-1.2.0", type = DependencyType.OPTIONAL, ordering = Order.AFTER))
+    add(ModDep("mekanism_extras", "1.21.1-1.2.1", type = DependencyType.INCOMPATIBLE, reason = "Incompatible Mixins"))
     add(ModDep("mekanism_unleashed", "0.0.0", type = DependencyType.INCOMPATIBLE, reason = "Because Advanced Speed Upgrade becomes meaningless"))
 }
 

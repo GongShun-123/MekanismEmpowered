@@ -14,7 +14,7 @@ mixinExtras = "0.5.0-rc.2"
 easyNestConfig = "4.0.0"
 jei = "19.21.0.247"
 mekanism = "1.21.1-10.7.14.79"
-mekanismExtras = "6455223"
+mekanismExtras = "6498463"
 
 
 [libraries]

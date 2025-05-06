@@ -9,6 +9,7 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.ShapedRecipe
 import net.minecraft.world.level.ItemLike
 
+
 class MekanismDataShapedRecipeBuilder(item: ItemLike, amount: Int = 1, category: RecipeCategory = RecipeCategory.MISC) :
     EmpoweredShapedRecipeBuilder(item, amount, category) {
 
