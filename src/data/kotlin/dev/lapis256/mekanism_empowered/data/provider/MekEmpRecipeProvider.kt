@@ -27,12 +27,12 @@ import java.util.function.Consumer
 class MekEmpRecipeProvider(output: PackOutput) : RecipeProvider(output) {
     override fun buildRecipes(output: Consumer<FinishedRecipe>) {
         upgrade(output, MekEmpItems.AUTO_INSERTER, Blocks.STICKY_PISTON)
-        upgrade(output, MekEmpItems.IO_CAPACITY, MekanismTags.Items.DUSTS_LITHIUM)
 
         advancedUpgrade(output, MekEmpItems.EMPOWERED_SPEED, PrimaryResource.OSMIUM.processedTag(ResourceType.DUST))
         advancedUpgrade(output, MekEmpItems.EMPOWERED_ENERGY, PrimaryResource.GOLD.processedTag(ResourceType.DUST))
         advancedUpgrade(output, MekEmpItems.FAST_ITEM_EJECT, Blocks.PISTON)
         advancedUpgrade(output, MekEmpItems.FAST_ITEM_INSERT, Blocks.STICKY_PISTON)
+        advancedUpgrade(output, MekEmpItems.IO_CAPACITY, MekanismTags.Items.DUSTS_LITHIUM)
 
         gaugeDropper(output, MekEmpItems.BASIC_GAUGE_DROPPER, MekanismItems.GAUGE_DROPPER, MekanismTags.Items.ALLOYS_BASIC)
         gaugeDropper(output, MekEmpItems.ADVANCED_GAUGE_DROPPER, MekEmpItems.BASIC_GAUGE_DROPPER, MekanismTags.Items.ALLOYS_INFUSED)

@@ -3,19 +3,22 @@
   "category": "misc",
   "key": {
     "a": {
-      "tag": "forge:alloys/advanced"
+      "tag": "mekanism:alloys/atomic"
     },
     "c": {
       "tag": "forge:dusts/lithium"
     },
     "g": {
-      "tag": "forge:glass"
+      "item": "mekanism:structural_glass"
+    },
+    "h": {
+      "item": "mekanism:hdpe_sheet"
     }
   },
   "pattern": [
-    " g ",
+    "hgh",
     "aca",
-    " g "
+    "hgh"
   ],
   "result": {
     "item": "mekanism_empowered:upgrade_io_capacity"
