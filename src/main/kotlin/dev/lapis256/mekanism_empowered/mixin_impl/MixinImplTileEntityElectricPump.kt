@@ -4,13 +4,13 @@ import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
 import dev.lapis256.mekanism_empowered.core.extension.fractionUpgrades
 import dev.lapis256.mekanism_empowered.core.extension.isSpeedMaxed
 import mekanism.api.math.MathUtils
-import mekanism.common.tile.base.TileEntityMekanism
+import mekanism.common.tile.interfaces.IUpgradeTile
 import kotlin.math.pow
 
 
 object MixinImplTileEntityElectricPump {
     @JvmStatic
-    fun TileEntityMekanism.modifyOutputRate(original: Int): Int {
+    fun IUpgradeTile.modifyOutputRate(original: Int): Int {
         if (!isSpeedMaxed()) {
             return original
         }
@@ -19,7 +19,7 @@ object MixinImplTileEntityElectricPump {
     }
 
     @JvmStatic
-    fun TileEntityMekanism.modifyWaterOutputAmount(original: Int): Int {
+    fun IUpgradeTile.modifyWaterOutputAmount(original: Int): Int {
         if (!isSpeedMaxed()) {
             return original
         }

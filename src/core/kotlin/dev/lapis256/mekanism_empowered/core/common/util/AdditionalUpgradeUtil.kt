@@ -19,6 +19,6 @@ object AdditionalUpgradeUtil {
     fun addSupported(blockType: BlockType, vararg upgrades: Upgrade) {
         val attribute = blockType.get(AttributeUpgradeSupport::class.java) ?: return
         val supportedUpgrades = arrayOf(*attribute.supportedUpgrades.toTypedArray(), *upgrades)
-        blockType.add(AttributeUpgradeSupport.create(*supportedUpgrades))
+        blockType.add(AttributeUpgradeSupport(supportedUpgrades.toSet()))
     }
 }

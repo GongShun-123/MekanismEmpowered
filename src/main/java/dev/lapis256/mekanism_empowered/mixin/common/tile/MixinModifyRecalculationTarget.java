@@ -36,7 +36,6 @@ class MixinModifyRecalculationTarget {
             TileEntityPigmentMixer.class,
             TileEntityRotaryCondensentrator.class,
             TileEntityFormulaicAssemblicator.class,
-            TileEntityQIOFilterHandler.class,
             TileEntityProgressMachine.class,
             TileEntityDigitalMiner.class
 

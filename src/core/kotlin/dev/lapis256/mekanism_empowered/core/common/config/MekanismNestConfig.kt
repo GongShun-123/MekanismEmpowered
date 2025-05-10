@@ -8,8 +8,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import mekanism.common.config.IMekanismConfig
 import mekanism.common.config.value.*
-import net.neoforged.fml.config.ModConfig
-import net.neoforged.neoforge.common.ModConfigSpec
+import net.minecraftforge.common.ForgeConfigSpec
+import net.minecraftforge.fml.config.ModConfig
 import kotlin.reflect.KProperty
 
 
@@ -43,18 +43,18 @@ abstract class MekanismNestConfig(type: ModConfig.Type, name: String) : Abstract
 
     override fun getFileName(): String = name
     override fun getConfigType(): ModConfig.Type = type
-    override fun getConfigSpec(): ModConfigSpec = spec
+    override fun getConfigSpec(): ForgeConfigSpec = spec
 
 
-    fun ModConfigSpec.ConfigValue<Boolean>.cached(): CachedBooleanValue = CachedBooleanValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Byte>.cached(): CachedByteValue = CachedByteValue.wrap(this@MekanismNestConfig, this)
-    fun <T> ModConfigSpec.ConfigValue<T>.cached(): CachedConfigValue<T> = CachedConfigValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Double>.cached(): CachedDoubleValue = CachedDoubleValue.wrap(this@MekanismNestConfig, this)
-    fun <E : Enum<E>> ModConfigSpec.EnumValue<E>.cached(): CachedConfigValue<E> = CachedEnumValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Double>.cachedF(): CachedFloatValue = CachedFloatValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Int>.cached(): CachedIntValue = CachedIntValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Long>.cached(): CachedLongValue = CachedLongValue.wrap(this@MekanismNestConfig, this)
-    fun ModConfigSpec.ConfigValue<Short>.cached(): CachedShortValue = CachedShortValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Boolean>.cached(): CachedBooleanValue = CachedBooleanValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Byte>.cached(): CachedByteValue = CachedByteValue.wrap(this@MekanismNestConfig, this)
+    fun <T> ForgeConfigSpec.ConfigValue<T>.cached(): CachedConfigValue<T> = CachedConfigValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Double>.cached(): CachedDoubleValue = CachedDoubleValue.wrap(this@MekanismNestConfig, this)
+    fun <E : Enum<E>> ForgeConfigSpec.EnumValue<E>.cached(): CachedConfigValue<E> = CachedEnumValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Double>.cachedF(): CachedFloatValue = CachedFloatValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Int>.cached(): CachedIntValue = CachedIntValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Long>.cached(): CachedLongValue = CachedLongValue.wrap(this@MekanismNestConfig, this)
+    fun ForgeConfigSpec.ConfigValue<Short>.cached(): CachedShortValue = CachedShortValue.wrap(this@MekanismNestConfig, this)
 
     operator fun CachedBooleanValue.getValue(a: Any?, p: KProperty<*>) = get()
     operator fun CachedByteValue.getValue(a: Any?, p: KProperty<*>) = get()

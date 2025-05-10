@@ -1,16 +1,18 @@
 package dev.lapis256.mekanism_empowered.common.network
 
+import dev.lapis256.mekanism_empowered.api.MekanismEmpoweredAPI
 import dev.lapis256.mekanism_empowered.common.network.to_server.configuration_update.PacketSideInserterData
 import mekanism.common.lib.Version
 import mekanism.common.network.BasePacketHandler
-import net.neoforged.bus.api.IEventBus
+import net.minecraftforge.network.simple.SimpleChannel
 
 
-class MekEmpPacketHandler(modEventBus: IEventBus, version: Version) : BasePacketHandler(modEventBus, version) {
-    override fun registerClientToServer(registrar: PacketRegistrar) {
-        registrar.play(PacketSideInserterData.TYPE, PacketSideInserterData.STREAM_CODEC)
-    }
+class MekEmpPacketHandler(versionNumber: Version) : BasePacketHandler() {
+    private val netHandler = createChannel(MekanismEmpoweredAPI.rl(MekanismEmpoweredAPI.MOD_ID), versionNumber)
 
-    override fun registerServerToClient(registrar: PacketRegistrar) {
+    override fun getChannel(): SimpleChannel = netHandler
+
+    override fun initialize() {
+        registerClientToServer(PacketSideInserterData::class.java, PacketSideInserterData::decode)
     }
 }

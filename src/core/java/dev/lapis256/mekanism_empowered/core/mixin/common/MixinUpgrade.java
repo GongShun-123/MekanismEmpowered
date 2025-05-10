@@ -1,11 +1,10 @@
 package dev.lapis256.mekanism_empowered.core.mixin.common;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.mojang.serialization.Codec;
 import dev.lapis256.mekanism_empowered.core.mixin_impl.MixinImplUpgrade;
 import mekanism.api.Upgrade;
+import mekanism.api.text.APILang;
 import mekanism.api.text.EnumColor;
-import mekanism.api.text.ILangEntry;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -30,15 +29,11 @@ public class MixinUpgrade {
     @Mutable
     private static Upgrade[] $VALUES;
 
-    @Shadow
-    @Final
-    public static Codec<Upgrade> CODEC;
-
     @Unique
     private static MixinImplUpgrade mekanismEmpoweredCore$impl;
 
     @Invoker(value = "<init>")
-    public static Upgrade mekanismEmpoweredCore$createUpgradeInstance(String internalName, int internalId, String name, ILangEntry langKey, ILangEntry descLangKey, int maxStack, EnumColor color) {
+    public static Upgrade mekanismEmpoweredCore$createUpgradeInstance(String internalName, int internalId, String name, APILang langKey, APILang descLangKey, int maxStack, EnumColor color) {
         throw new AssertionError("Mixin failed to apply, this should never be called");
     }
 
@@ -46,11 +41,6 @@ public class MixinUpgrade {
     private static void mekanismEmpoweredCore$initAdditionalUpgrades(CallbackInfo ci) {
         mekanismEmpoweredCore$impl = new MixinImplUpgrade(MixinUpgrade::mekanismEmpoweredCore$createUpgradeInstance);
         $VALUES = mekanismEmpoweredCore$impl.initAdditionalUpgrades($VALUES);
-    }
-
-    @Inject(method = "<clinit>", at = @At(value = "RETURN"))
-    private static void mekanismEmpoweredCore$initAdditionalCodec(CallbackInfo ci) {
-        mekanismEmpoweredCore$impl.setCodec(CODEC);
     }
 
     @ModifyVariable(method = "buildMap", at = @At(value = "STORE", ordinal = 0), ordinal = 0)

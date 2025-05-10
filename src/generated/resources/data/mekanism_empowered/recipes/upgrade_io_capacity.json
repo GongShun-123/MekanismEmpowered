@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "a": {
-      "tag": "c:alloys/advanced"
+      "tag": "forge:alloys/advanced"
     },
     "c": {
-      "item": "minecraft:sticky_piston"
+      "tag": "forge:dusts/lithium"
     },
     "g": {
-      "tag": "c:glass_blocks"
+      "tag": "forge:glass"
     }
   },
   "pattern": [
@@ -18,7 +18,7 @@
     " g "
   ],
   "result": {
-    "count": 1,
-    "id": "mekanism_empowered:upgrade_auto_inserter"
-  }
+    "item": "mekanism_empowered:upgrade_io_capacity"
+  },
+  "show_notification": true
 }

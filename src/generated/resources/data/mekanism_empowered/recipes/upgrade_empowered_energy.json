@@ -6,7 +6,7 @@
       "tag": "mekanism:alloys/atomic"
     },
     "c": {
-      "tag": "c:dusts/gold"
+      "tag": "forge:dusts/gold"
     },
     "g": {
       "item": "mekanism:structural_glass"
@@ -21,7 +21,7 @@
     "hgh"
   ],
   "result": {
-    "count": 1,
-    "id": "mekanism_empowered:upgrade_empowered_energy"
-  }
+    "item": "mekanism_empowered:upgrade_empowered_energy"
+  },
+  "show_notification": true
 }

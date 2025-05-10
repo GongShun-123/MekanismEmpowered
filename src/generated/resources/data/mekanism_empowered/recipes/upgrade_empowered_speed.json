@@ -6,7 +6,7 @@
       "tag": "mekanism:alloys/atomic"
     },
     "c": {
-      "item": "minecraft:sticky_piston"
+      "tag": "forge:dusts/osmium"
     },
     "g": {
       "item": "mekanism:structural_glass"
@@ -21,7 +21,7 @@
     "hgh"
   ],
   "result": {
-    "count": 1,
-    "id": "mekanism_empowered:upgrade_fast_item_insert"
-  }
+    "item": "mekanism_empowered:upgrade_empowered_speed"
+  },
+  "show_notification": true
 }

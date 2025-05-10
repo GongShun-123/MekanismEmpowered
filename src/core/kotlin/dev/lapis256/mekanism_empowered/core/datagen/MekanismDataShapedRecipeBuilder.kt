@@ -1,12 +1,11 @@
 package dev.lapis256.mekanism_empowered.core.datagen
 
-import mekanism.common.recipe.upgrade.MekanismShapedRecipe
+import mekanism.common.registries.MekanismRecipeSerializers
 import net.minecraft.core.Holder
 import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Recipe
-import net.minecraft.world.item.crafting.ShapedRecipe
+import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 
 
@@ -17,7 +16,5 @@ class MekanismDataShapedRecipeBuilder(item: ItemLike, amount: Int = 1, category:
 
     constructor(holder: Holder<Item>, amount: Int = 1, category: RecipeCategory = RecipeCategory.MISC) : this(holder.value(), amount, category)
 
-    override fun wrapRecipe(recipe: ShapedRecipe): Recipe<*> {
-        return MekanismShapedRecipe(recipe)
-    }
+    override val recipeSerializer: RecipeSerializer<*> = MekanismRecipeSerializers.MEK_DATA.get()
 }

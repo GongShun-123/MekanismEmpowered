@@ -1,31 +1,38 @@
 package dev.lapis256.mekanism_empowered.core.mixin_impl
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.UnboundedMapCodec
-import dev.lapis256.mekanism_empowered.core.common.MekanismEmpoweredCore
 import dev.lapis256.mekanism_empowered.core.api.upgrade.AdditionalUpgradeLoader
+import dev.lapis256.mekanism_empowered.core.common.MekanismEmpoweredCore
+import dev.lapis256.mekanism_empowered.core.mixin.common.InvokeAPILang
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import mekanism.api.Upgrade
+import mekanism.api.text.APILang
 import mekanism.api.text.EnumColor
 import mekanism.api.text.ILangEntry
+import mekanism.common.util.EnumUtils
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.NbtOps
 import net.minecraft.nbt.Tag
-import net.minecraft.util.ExtraCodecs
 import java.util.*
 
 
-class MixinImplUpgrade(constructor: (String, Int, String, ILangEntry, ILangEntry, Int, EnumColor) -> Upgrade) {
+class MixinImplUpgrade(val constructor: (String, Int, String, APILang, APILang, Int, EnumColor) -> Upgrade) {
     private val additionalOrdinals = IntOpenHashSet()
 
-    private val loader = AdditionalUpgradeLoader(constructor, additionalOrdinals::add)
+    private val upgradeMap by lazy { EnumUtils.UPGRADES.associateBy(Upgrade::getRawName) }
 
-    var codec: Codec<Upgrade>? = null
+    private fun createDummy(key: ILangEntry) = InvokeAPILang.createDummy("MEKANISM_EMPOWERED_CORE_DUMMY_API_LANG", 999, key.translationKey)
 
-    private val additionalCodec: UnboundedMapCodec<Upgrade, Int> by lazy {
-        codec ?: error("Codec not initialized")
-        Codec.unboundedMap(codec, ExtraCodecs.POSITIVE_INT)
-    }
+    private fun altConstructor(
+        internalName: String,
+        ordinal: Int,
+        name: String,
+        langKey: ILangEntry,
+        descLangKey: ILangEntry,
+        maxStack: Int,
+        color: EnumColor
+    ) =
+        constructor(internalName, ordinal, name, createDummy(langKey), createDummy(descLangKey), maxStack, color)
+
+    private val loader = AdditionalUpgradeLoader(::altConstructor, additionalOrdinals::add)
 
     fun initAdditionalUpgrades(builtInUpgrades: Array<Upgrade>) = loader.initAdditionalEnumEntry(builtInUpgrades)
 
@@ -37,13 +44,15 @@ class MixinImplUpgrade(constructor: (String, Int, String, ILangEntry, ILangEntry
         }
 
         val upgrades = upgrades ?: EnumMap(Upgrade::class.java)
+        val compound = nbtTags.getCompound(MekanismEmpoweredCore.SerializationConstants.UPGRADES)
 
-        additionalCodec.parse(
-            NbtOps.INSTANCE,
-            nbtTags.getCompound(MekanismEmpoweredCore.SerializationConstants.UPGRADES)
-        )
-            .ifSuccess(upgrades::putAll)
-            .ifError { e -> MekanismEmpoweredCore.LOGGER.error("Failed to parse additional upgrades: {}", e) }
+        for (entry in compound.allKeys) {
+            val upgrade = upgradeMap[entry] ?: continue
+            val amount = compound.getInt(entry)
+            if (amount > 0) {
+                upgrades[upgrade] = amount
+            }
+        }
 
         return upgrades
     }
@@ -58,8 +67,10 @@ class MixinImplUpgrade(constructor: (String, Int, String, ILangEntry, ILangEntry
         val additionalUpgrades = upgrades
             .filter { e -> additionalOrdinals.contains(e.key.ordinal) }
 
-        additionalCodec.encodeStart(NbtOps.INSTANCE, additionalUpgrades)
-            .ifSuccess { tag -> nbtTags.put(MekanismEmpoweredCore.SerializationConstants.UPGRADES, tag) }
-            .ifError { e -> MekanismEmpoweredCore.LOGGER.error("Failed to save additional upgrades: {}", e) }
+        nbtTags.put(MekanismEmpoweredCore.SerializationConstants.UPGRADES, CompoundTag().apply {
+            for ((upgrade, amount) in additionalUpgrades) {
+                putInt(upgrade.rawName, amount)
+            }
+        })
     }
 }

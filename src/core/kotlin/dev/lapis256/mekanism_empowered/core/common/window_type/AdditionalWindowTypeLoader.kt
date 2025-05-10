@@ -5,10 +5,10 @@ import mekanism.common.inventory.container.SelectedWindowData
 
 
 class AdditionalWindowTypeLoader(
-    val constructor: (String, Int, String, Boolean, Byte) -> SelectedWindowData.WindowType
+    val constructor: (String, Int, String, Byte) -> SelectedWindowData.WindowType
 ) : EnumExtensionLoader<SelectedWindowData.WindowType, AdditionalWindowTypeDelegate>() {
     override fun initEnumExtensions() = loadEnumExtensions(IAdditionalWindowTypes::class)
 
     override fun constructEntry(ordinal: Int, property: AdditionalWindowTypeDelegate) =
-        constructor(property.internalName, ordinal, property.saveName, property.canPin, property.maxData)
+        constructor(property.internalName, ordinal, property.saveName, property.maxData)
 }

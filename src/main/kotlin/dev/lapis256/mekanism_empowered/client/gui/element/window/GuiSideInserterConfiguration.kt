@@ -10,6 +10,7 @@ import mekanism.common.inventory.container.SelectedWindowData
 import mekanism.common.tile.base.TileEntityMekanism
 import mekanism.common.tile.interfaces.ISideConfiguration
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import java.util.*
 
 
@@ -40,15 +41,30 @@ class GuiSideInserterConfiguration<TILE>(
                     relativeX + xPos,
                     relativeY + yPos,
                     tile,
-                    side
+                    side,
+                    getOnHoverButton()
                 )
             )
         )
     }
 
+    private fun getOnHoverButton(): IHoverable {
+        return IHoverable { onHover, guiGraphics, mouseX, mouseY ->
+            val button = onHover as? SideInserterButton<*> ?: return@IHoverable
+            displayTooltips(guiGraphics, mouseX, mouseY, button.buildTooltip())
+        }
+    }
+
     override fun getTitlePadEnd() = super.titlePadEnd + 18
 
     override fun renderForeground(guiGraphics: GuiGraphics?, mouseX: Int, mouseY: Int) {
-        drawTitleText(guiGraphics, MekEmpLang.INSERTER_CONFIG.translate(), 5)
+        super.renderForeground(guiGraphics, mouseX, mouseY)
+        drawTitleText(guiGraphics, MekEmpLang.INSERTER_CONFIG.translate(), 5F)
+    }
+
+    override fun renderWidget(p0: GuiGraphics, p1: Int, p2: Int, p3: Float) {
+    }
+
+    override fun updateWidgetNarration(p0: NarrationElementOutput) {
     }
 }

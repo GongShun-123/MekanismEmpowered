@@ -2,18 +2,15 @@ package dev.lapis256.mekanism_empowered.common.init
 
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
 import dev.lapis256.mekanism_empowered.api.MekanismEmpoweredAPI
-import dev.lapis256.mekanism_empowered.common.config.MekEmpTierConfig
 import dev.lapis256.mekanism_empowered.common.item.ItemTieredGaugeDropper
 import dev.lapis256.mekanism_empowered.core.common.upgrade.UpgradeItemRegistry
 import mekanism.api.Upgrade
 import mekanism.api.tier.BaseTier
-import mekanism.common.attachments.containers.ContainerType
 import mekanism.common.item.ItemUpgrade
 import mekanism.common.registration.impl.ItemDeferredRegister
 import mekanism.common.registration.impl.ItemRegistryObject
 
 
-@Suppress("UnstableApiUsage")
 object MekEmpItems {
     val REGISTRY = ItemDeferredRegister(MekanismEmpoweredAPI.MOD_ID)
 
@@ -33,33 +30,14 @@ object MekEmpItems {
         UpgradeItemRegistry.register(MekEmpUpgrade.IO_CAPACITY, IO_CAPACITY)
     }
 
-    val BASIC_GAUGE_DROPPER: ItemRegistryObject<ItemTieredGaugeDropper> = registerTiredGaugeDropper(BaseTier.BASIC)
-    val ADVANCED_GAUGE_DROPPER: ItemRegistryObject<ItemTieredGaugeDropper> = registerTiredGaugeDropper(BaseTier.ADVANCED)
-    val ELITE_GAUGE_DROPPER: ItemRegistryObject<ItemTieredGaugeDropper> = registerTiredGaugeDropper(BaseTier.ELITE)
-    val ULTIMATE_GAUGE_DROPPER: ItemRegistryObject<ItemTieredGaugeDropper> = registerTiredGaugeDropper(BaseTier.ULTIMATE)
+    val BASIC_GAUGE_DROPPER = registerTiredGaugeDropper(BaseTier.BASIC)
+    val ADVANCED_GAUGE_DROPPER = registerTiredGaugeDropper(BaseTier.ADVANCED)
+    val ELITE_GAUGE_DROPPER = registerTiredGaugeDropper(BaseTier.ELITE)
+    val ULTIMATE_GAUGE_DROPPER = registerTiredGaugeDropper(BaseTier.ULTIMATE)
 
-    private fun registerTiredGaugeDropper(tier: BaseTier): ItemRegistryObject<ItemTieredGaugeDropper> {
-        val (rete, capacity) = when (tier) {
-            BaseTier.BASIC -> MekEmpTierConfig.GaugeDropper.basicRate to MekEmpTierConfig.GaugeDropper.basicCapacity
-            BaseTier.ADVANCED -> MekEmpTierConfig.GaugeDropper.advancedRate to MekEmpTierConfig.GaugeDropper.advancedCapacity
-            BaseTier.ELITE -> MekEmpTierConfig.GaugeDropper.eliteRate to MekEmpTierConfig.GaugeDropper.eliteCapacity
-            BaseTier.ULTIMATE -> MekEmpTierConfig.GaugeDropper.ultimateRate to MekEmpTierConfig.GaugeDropper.ultimateCapacity
-            else -> error("Invalid tier: $tier")
-        }
-
-        return REGISTRY.registerItem("${tier.lowerName}_gauge_dropper") { properties -> ItemTieredGaugeDropper(tier, properties) }
-            .addAttachedContainerCapabilities(
-                ContainerType.CHEMICAL,
-                { ItemTieredGaugeDropper.getChemicalTankCreator(rete, capacity) },
-                MekEmpTierConfig
-            )
-            .addAttachedContainerCapabilities(
-                ContainerType.FLUID,
-                { ItemTieredGaugeDropper.getFluidTankCreator(rete, capacity) },
-                MekEmpTierConfig
-            )
-    }
+    private fun registerTiredGaugeDropper(tier: BaseTier): ItemRegistryObject<ItemTieredGaugeDropper> =
+        REGISTRY.register("${tier.lowerName}_gauge_dropper") { p -> ItemTieredGaugeDropper(tier, p) }
 
     private fun registerUpgrade(upgrade: Upgrade): ItemRegistryObject<ItemUpgrade> =
-        REGISTRY.registerItem("upgrade_${upgrade.serializedName}") { ItemUpgrade(upgrade, it) }
+        REGISTRY.register("upgrade_${upgrade.rawName}") { p -> ItemUpgrade(upgrade, p) }
 }

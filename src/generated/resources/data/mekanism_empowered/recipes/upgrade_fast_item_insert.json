@@ -6,7 +6,7 @@
       "tag": "mekanism:alloys/atomic"
     },
     "c": {
-      "item": "minecraft:piston"
+      "item": "minecraft:sticky_piston"
     },
     "g": {
       "item": "mekanism:structural_glass"
@@ -21,7 +21,7 @@
     "hgh"
   ],
   "result": {
-    "count": 1,
-    "id": "mekanism_empowered:upgrade_fast_item_eject"
-  }
+    "item": "mekanism_empowered:upgrade_fast_item_insert"
+  },
+  "show_notification": true
 }

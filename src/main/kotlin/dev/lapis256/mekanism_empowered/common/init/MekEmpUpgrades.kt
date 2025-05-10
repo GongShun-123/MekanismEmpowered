@@ -1,8 +1,8 @@
 package dev.lapis256.mekanism_empowered.common.init
 
-import com.jerry.mekextras.common.registries.ExtraBlockTypes
-import com.jerry.mekextras.common.tier.AdvancedFactoryTier
-import com.jerry.mekextras.common.tile.machine.TileEntityAdvanceElectricPump
+import com.jerry.mekanism_extras.common.registry.ExtraBlockType
+import com.jerry.mekanism_extras.common.tier.AdvancedFactoryTier
+import com.jerry.mekanism_extras.common.tile.machine.TileEntityAdvancedElectricPump
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
 import dev.lapis256.mekanism_empowered.core.common.upgrade.UpgradeInfoHandler
 import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil
@@ -10,12 +10,12 @@ import dev.lapis256.mekanism_empowered.core.extension.getInstalledOrDefault
 import mekanism.api.Upgrade
 import mekanism.common.content.blocktype.FactoryType
 import mekanism.common.registries.MekanismBlockTypes
-import mekanism.common.tier.FactoryTier
 import mekanism.common.tile.interfaces.IUpgradeTile
 import mekanism.common.tile.machine.TileEntityElectricPump
+import mekanism.common.util.EnumUtils
 import mekanism.common.util.UpgradeUtils
 import net.minecraft.network.chat.Component
-import net.neoforged.fml.ModList
+import net.minecraftforge.fml.ModList
 
 
 object MekEmpUpgrades {
@@ -27,7 +27,7 @@ object MekEmpUpgrades {
         UpgradeInfoHandler.register(MekEmpUpgrade.EMPOWERED_SPEED, UpgradeUtils::getExpScaledInfo)
             .registerOverrideForTiles(TileEntityElectricPump::class) { it, _ -> empoweredSpeedUpgradePumpInfo.invoke(it) }
             .conditionallyRegisterOverride(ModList.get().isLoaded("mekanism_extras")) {
-                registerOverrideForTiles(TileEntityAdvanceElectricPump::class) { it, _ -> empoweredSpeedUpgradePumpInfo.invoke(it) }
+                registerOverrideForTiles(TileEntityAdvancedElectricPump::class) { it, _ -> empoweredSpeedUpgradePumpInfo.invoke(it) }
             }
 
         UpgradeInfoHandler.register(MekEmpUpgrade.EMPOWERED_ENERGY, UpgradeUtils::getMultScaledInfo)
@@ -92,21 +92,20 @@ object MekEmpUpgrades {
         AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.ELECTRIC_PUMP, *speedAndEnergyUpgrades)
 
         if (ModList.get().isLoaded("mekanism_extras")) {
-            AdditionalUpgradeUtil.addSupported(ExtraBlockTypes.ADVANCE_ELECTRIC_PUMP, *speedAndEnergyUpgrades)
+            AdditionalUpgradeUtil.addSupported(ExtraBlockType.ADVANCED_ELECTRIC_PUMP, *speedAndEnergyUpgrades)
         }
     }
 
     private fun registerFactoryUpgrades(type: FactoryType, upgrades: Array<Upgrade>) {
-        AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.getFactory(FactoryTier.BASIC, type), *upgrades)
-        AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.getFactory(FactoryTier.ADVANCED, type), *upgrades)
-        AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.getFactory(FactoryTier.ELITE, type), *upgrades)
-        AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.getFactory(FactoryTier.ULTIMATE, type), *upgrades)
+        for (tier in EnumUtils.FACTORY_TIERS) {
+            AdditionalUpgradeUtil.addSupported(MekanismBlockTypes.getFactory(tier, type), *upgrades)
+        }
 
         if (ModList.get().isLoaded("mekanism_extras")) {
-            AdditionalUpgradeUtil.addSupported(ExtraBlockTypes.getAdvancedFactory(AdvancedFactoryTier.ABSOLUTE, type), *upgrades)
-            AdditionalUpgradeUtil.addSupported(ExtraBlockTypes.getAdvancedFactory(AdvancedFactoryTier.SUPREME, type), *upgrades)
-            AdditionalUpgradeUtil.addSupported(ExtraBlockTypes.getAdvancedFactory(AdvancedFactoryTier.COSMIC, type), *upgrades)
-            AdditionalUpgradeUtil.addSupported(ExtraBlockTypes.getAdvancedFactory(AdvancedFactoryTier.INFINITE, type), *upgrades)
+            AdditionalUpgradeUtil.addSupported(ExtraBlockType.getAdvancedFactory(AdvancedFactoryTier.ABSOLUTE, type), *upgrades)
+            AdditionalUpgradeUtil.addSupported(ExtraBlockType.getAdvancedFactory(AdvancedFactoryTier.SUPREME, type), *upgrades)
+            AdditionalUpgradeUtil.addSupported(ExtraBlockType.getAdvancedFactory(AdvancedFactoryTier.COSMIC, type), *upgrades)
+            AdditionalUpgradeUtil.addSupported(ExtraBlockType.getAdvancedFactory(AdvancedFactoryTier.INFINITE, type), *upgrades)
         }
     }
 }

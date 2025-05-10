@@ -2,8 +2,8 @@ package dev.lapis256.mekanism_empowered.core.common.upgrade
 
 import dev.lapis256.mekanism_empowered.core.api.upgrade.AdditionalUpgradeDelegate
 import mekanism.api.Upgrade
-import net.minecraft.core.Holder
-import net.minecraft.world.item.Item
+import mekanism.common.item.ItemUpgrade
+import java.util.function.Supplier
 
 
 /**
@@ -13,7 +13,7 @@ import net.minecraft.world.item.Item
  */
 @Suppress("Unused")
 object UpgradeItemRegistry {
-    private val upgradeMap = mutableMapOf<Upgrade, Holder<Item>>()
+    private val upgradeMap = mutableMapOf<Upgrade, Supplier<ItemUpgrade>>()
 
     /**
      * Retrieves the item associated with the specified upgrade.
@@ -31,7 +31,7 @@ object UpgradeItemRegistry {
      * @param upgrade The upgrade to associate with the item.
      * @param item The item to associate with the upgrade.
      */
-    fun register(upgrade: Upgrade, item: Holder<Item>) {
+    fun register(upgrade: Upgrade, item: Supplier<ItemUpgrade>) {
         upgradeMap[upgrade] = item
     }
 
@@ -44,7 +44,7 @@ object UpgradeItemRegistry {
      * @param item The item to associate with the upgrade.
      */
     @JvmStatic
-    fun register(upgrade: AdditionalUpgradeDelegate, item: Holder<Item>) {
+    fun register(upgrade: AdditionalUpgradeDelegate, item: Supplier<ItemUpgrade>) {
         register(upgrade.get(), item)
     }
 }

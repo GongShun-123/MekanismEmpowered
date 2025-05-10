@@ -5,5 +5,5 @@ import dev.lapis256.mekanism_empowered.core.common.window_type.AdditionalWindowT
 
 
 object MekEmpWindowType : IAdditionalWindowTypes {
-    val INSERTER by AdditionalWindowType.register("inserter", true, 1)
+    val INSERTER by AdditionalWindowType.register("inserter", 1)
 }

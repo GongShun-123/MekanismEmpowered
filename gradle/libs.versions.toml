@@ -1,28 +1,31 @@
 [versions]
-plugin_kotlin = "2.1.0"
+plugin_kotlin = "2.0.0"
 plugin_moddev = "2.0.+"
 plugin_curseForge = "1.+"
 plugin_modrinth = "2.+"
 
 
-minecraft = "1.21.1"
-neoforge = "21.1.133"
-kotlinForForge = "5.7.0"
-parchmentmc = "2024.11.17"
+minecraft = "1.20.1"
+forge = "47.4.0"
+kotlinForForge = "4.11.0"
+parchmentmc = "2023.09.03"
+mixin = "0.8.5"
 mixinExtras = "0.5.0-rc.2"
 
-easyNestConfig = "4.0.0"
-jei = "19.21.0.247"
-mekanism = "1.21.1-10.7.14.79"
-mekanismExtras = "6498463"
+easyNestConfig = "3.0.0"
+jei = "15.20.0.106"
+mekanism = "1.20.1-10.4.15.75"
+mekanismExtras = "6498454"
 
 
 [libraries]
-kotlinForForge = { module = "thedarkcolour:kotlinforforge-neoforge", version.ref = "kotlinForForge" }
-mixinExtras = { module = "io.github.llamalad7:mixinextras-neoforge", version.ref = "mixinExtras" }
+kotlinForForge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinForForge" }
+mixin = { module = "org.spongepowered:mixin", version.ref = "mixin" }
+mixinExtrasCommon = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinExtras" }
+mixinExtrasForge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinExtras" }
 
 easyNestConfig = { module = "dev.lapis256:EasyNestConfig", version.ref = "easyNestConfig" }
-jei = { module = "mezz.jei:jei-1.21.1-neoforge", version.ref = "jei" }
+jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
 mekanism = { module = "mekanism:Mekanism", version.ref = "mekanism" }
 mekanismExtras = { module = "curse.maven:mekanism-extras-1026040", version.ref = "mekanismExtras" }
 
@@ -30,6 +33,6 @@ mekanismExtras = { module = "curse.maven:mekanism-extras-1026040", version.ref =
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "plugin_kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin_kotlin" }
-moddev = { id = "net.neoforged.moddev", version.ref = "plugin_moddev" }
+moddev = { id = "net.neoforged.moddev.legacyforge", version.ref = "plugin_moddev" }
 curseForge = { id = "net.darkhax.curseforgegradle", version.ref = "plugin_curseForge" }
 modrinth = { id = "com.modrinth.minotaur", version.ref = "plugin_modrinth" }

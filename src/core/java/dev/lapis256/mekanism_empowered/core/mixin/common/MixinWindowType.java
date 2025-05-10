@@ -21,11 +21,11 @@ public class MixinWindowType {
     private static SelectedWindowData.WindowType[] $VALUES;
 
     @Invoker(value = "<init>")
-    public static SelectedWindowData.WindowType mekanismEmpoweredCore$createWindowTypeInstance(String internalName, int internalId, @Nullable String saveName, boolean canPin, byte maxData) {
+    public static SelectedWindowData.WindowType mekanismEmpoweredCore$createWindowTypeInstance(String internalName, int internalId, @Nullable String saveName, byte maxData) {
         throw new AssertionError("Mixin failed to apply, this should never be called");
     }
 
-    @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lmekanism/common/inventory/container/SelectedWindowData$WindowType;values()[Lmekanism/common/inventory/container/SelectedWindowData$WindowType;", ordinal = 0))
+    @Inject(method = "<clinit>", at = @At(value = "TAIL"))
     private static void mekanismEmpoweredCore$initAdditionalWindowTypes(CallbackInfo ci) {
         MixinImplWindowType mekanismEmpoweredCore$impl = new MixinImplWindowType(MixinWindowType::mekanismEmpoweredCore$createWindowTypeInstance);
         $VALUES = mekanismEmpoweredCore$impl.initAdditionalWindowTypes($VALUES);

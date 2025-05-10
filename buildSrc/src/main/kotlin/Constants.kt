@@ -7,7 +7,7 @@ object Constants {
         const val NAME = "Mekanism: Empowered"
         const val DESCRIPTION = "An addon mod that empowers Mekanism."
         const val LICENSE = "MIT"
-        const val VERSION = "2.0.0"
+        const val VERSION = "1.0.0"
         const val GROUP = "dev.lapis256"
         const val AUTHOR = "Lapis256"
         const val REPOSITORY_URL = "https://github.com/Lapis256/MekanismEmpowered"
@@ -20,7 +20,7 @@ object Constants {
     }
 
     object Dev {
-        const val JDK_VERSION = 21
+        const val JDK_VERSION = 17
         @Suppress("UnstableApiUsage")
         val JVM_VENDOR: JvmVendorSpec = JvmVendorSpec.JETBRAINS
     }

@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "a": {
-      "tag": "c:alloys/elite"
+      "tag": "forge:alloys/elite"
     },
     "b": {
       "item": "mekanism_empowered:advanced_gauge_dropper"
@@ -14,7 +14,7 @@
     "b"
   ],
   "result": {
-    "count": 1,
-    "id": "mekanism_empowered:elite_gauge_dropper"
-  }
+    "item": "mekanism_empowered:elite_gauge_dropper"
+  },
+  "show_notification": true
 }

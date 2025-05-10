@@ -2,6 +2,7 @@ package dev.lapis256.mekanism_empowered.mixin_impl
 
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
 import dev.lapis256.mekanism_empowered.core.extension.getInstalled
+import dev.lapis256.mekanism_empowered.core.extension.isSpeedMaxed
 import mekanism.api.Upgrade
 import mekanism.api.math.MathUtils
 import mekanism.common.tile.qio.TileEntityQIOComponent
@@ -10,8 +11,8 @@ import kotlin.math.pow
 
 object MixinImplTileEntityQIO {
     @JvmStatic
-    fun TileEntityQIOComponent.modifyMaxTransitCount(original: Int, speedUpgrades: Int): Int {
-        if (speedUpgrades < Upgrade.SPEED.max) {
+    fun TileEntityQIOComponent.modifyMaxTransitCount(original: Int): Int {
+        if (!isSpeedMaxed()) {
             return original
         }
 
@@ -22,17 +23,14 @@ object MixinImplTileEntityQIO {
     }
 
     @JvmStatic
-    fun TileEntityQIOComponent.modifyMaxTransitTypes(original: Int, speedUpgrades: Int): Int {
-        if (speedUpgrades < Upgrade.SPEED.max) {
+    fun TileEntityQIOComponent.modifyMaxTransitTypes(original: Int): Int {
+        if (!isSpeedMaxed()) {
             return original
         }
 
         // 5 to 13 types
         return original + (getInstalled(MekEmpUpgrade.EMPOWERED_SPEED) ?: return original)
     }
-
-    @JvmStatic
-    fun isAdditionalRecalculationTarget(upgrade: Upgrade) = upgrade == MekEmpUpgrade.IO_CAPACITY
 
     private fun TileEntityQIOComponent.modifyTickDelay(original: Int, upgrade: Upgrade): Int {
         val installed = getInstalled(upgrade) ?: return original

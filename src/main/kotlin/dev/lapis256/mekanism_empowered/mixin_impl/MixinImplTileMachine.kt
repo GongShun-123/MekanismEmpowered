@@ -11,7 +11,7 @@ import kotlin.math.pow
 
 object MixinImplTileMachine {
     @JvmStatic
-    fun TileEntityProgressMachine<MekanismRecipe<*>>.prcRecalculateAdditionalUpgrades() {
+    fun TileEntityProgressMachine<MekanismRecipe>.prcRecalculateAdditionalUpgrades() {
         recalculateUpgrades(MekEmpUpgrade.EMPOWERED_SPEED)
     }
 

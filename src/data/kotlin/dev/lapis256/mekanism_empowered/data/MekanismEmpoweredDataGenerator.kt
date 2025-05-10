@@ -1,26 +1,36 @@
 package dev.lapis256.mekanism_empowered.data
 
 import dev.lapis256.mekanism_empowered.api.MekanismEmpoweredAPI
+import dev.lapis256.mekanism_empowered.common.MekanismEmpowered
 import dev.lapis256.mekanism_empowered.data.provider.MekEmpItemModelProvider
 import dev.lapis256.mekanism_empowered.data.provider.MekEmpLanguageProvider
 import dev.lapis256.mekanism_empowered.data.provider.MekEmpRecipeProvider
-import net.neoforged.bus.api.SubscribeEvent
-import net.neoforged.fml.common.EventBusSubscriber
-import net.neoforged.neoforge.data.event.GatherDataEvent
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.data.event.GatherDataEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 
 
-@EventBusSubscriber(modid = MekanismEmpoweredAPI.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = MekanismEmpoweredAPI.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 object MekanismEmpoweredDataGenerator {
+    init {
+        @Suppress("Removal", "Deprecation")
+        val modBus = FMLJavaModLoadingContext.get().modEventBus
+        modBus.register(MekanismEmpoweredDataGenerator)
+    }
+
     @SubscribeEvent
-    private fun onGatherData(event: GatherDataEvent) {
+    fun onGatherData(event: GatherDataEvent) {
+        MekanismEmpowered.LOGGER.info("Gathering data...")
+
         val generator = event.generator
         val output = generator.packOutput
         val existingFileHelper = event.existingFileHelper
-        val lookupProvider = event.lookupProvider
 
         generator.addProvider(event.includeClient(), MekEmpLanguageProvider(output))
         generator.addProvider(event.includeClient(), MekEmpItemModelProvider(output, existingFileHelper))
 
-        generator.addProvider(event.includeServer(), MekEmpRecipeProvider(output, lookupProvider))
+        generator.addProvider(event.includeServer(), MekEmpRecipeProvider(output))
     }
 }

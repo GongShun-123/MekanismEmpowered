@@ -22,12 +22,12 @@ public class MixinTileComponentEjector {
         return MixinImplTileComponentEjector.modifyTickDelay(tile, original);
     }
 
-    @ModifyArg(method = "eject", at = @At(value = "INVOKE", target = "Lmekanism/common/util/FluidUtils;emit(Ljava/util/Collection;Lmekanism/api/fluid/IExtendedFluidTank;I)V"), index = 2)
+    @ModifyArg(method = "eject", at = @At(value = "INVOKE", target = "Lmekanism/common/util/FluidUtils;emit(Ljava/util/Set;Lmekanism/api/fluid/IExtendedFluidTank;Lnet/minecraft/world/level/block/entity/BlockEntity;I)V"), index = 3)
     private int mekanismEmpowered$modifyFluidEjectRate(int original) {
         return MixinImplTileComponentEjector.modifyFluidEjectRate(tile, original);
     }
 
-    @ModifyArg(method = "eject", at = @At(value = "INVOKE", target = "Lmekanism/common/util/ChemicalUtil;emit(Ljava/util/Collection;Lmekanism/api/chemical/IChemicalTank;J)V"), index = 2)
+    @ModifyArg(method = "eject", at = @At(value = "INVOKE", target = "Lmekanism/common/util/ChemicalUtil;emit(Ljava/util/Set;Lmekanism/api/chemical/IChemicalTank;Lnet/minecraft/world/level/block/entity/BlockEntity;J)V"), index = 3)
     private long mekanismEmpowered$modifyChemicalEjectRate(long original) {
         return MixinImplTileComponentEjector.modifyChemicalEjectRate(tile, original);
     }

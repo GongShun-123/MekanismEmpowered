@@ -7,6 +7,5 @@ import mekanism.common.inventory.container.SelectedWindowData
 class AdditionalWindowTypeDelegate(
     internalName: String?,
     val saveName: String,
-    val canPin: Boolean,
     val maxData: Byte
 ) : EnumEntryDelegate<SelectedWindowData.WindowType>(SelectedWindowData.WindowType::class, internalName)

@@ -3,11 +3,10 @@ package dev.lapis256.mekanism_empowered.mixin.common.tile;
 import dev.lapis256.mekanism_empowered.common.tile.component.TileComponentInserter;
 import dev.lapis256.mekanism_empowered.common.tile.component.TileComponentInserterConfig;
 import dev.lapis256.mekanism_empowered.common.tile.interfaces.ISideInserterConfiguration;
+import mekanism.api.providers.IBlockProvider;
 import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.tile.prefab.TileEntityConfigurableMachine;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,12 +15,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 
 @Mixin(value = TileEntityConfigurableMachine.class, remap = false)
 public abstract class MixinTileEntityConfigurableMachine extends TileEntityMekanism implements ISideInserterConfiguration {
-    public MixinTileEntityConfigurableMachine(Holder<Block> blockProvider, BlockPos pos, BlockState state) {
+    public MixinTileEntityConfigurableMachine(IBlockProvider blockProvider, BlockPos pos, BlockState state) {
         super(blockProvider, pos, state);
     }
 
@@ -48,7 +46,7 @@ public abstract class MixinTileEntityConfigurableMachine extends TileEntityMekan
     }
 
     @Inject(method = "onUpdateServer", at = @At(value = "TAIL"))
-    private void mekanismEmpowered$injectedOnUpdateServer(CallbackInfoReturnable<Boolean> cir) {
+    private void mekanismEmpowered$injectedOnUpdateServer(CallbackInfo ci) {
         this.mekanismEmpowered$inserter.tickServer();
     }
 }

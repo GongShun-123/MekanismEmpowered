@@ -1,33 +1,32 @@
 package dev.lapis256.mekanism_empowered.common.config
 
+import dev.lapis256.easy_nest_config.api.Comment
 import dev.lapis256.easy_nest_config.api.NestConfig
 import dev.lapis256.mekanism_empowered.core.common.config.MekanismNestConfig
-import net.neoforged.fml.config.ModConfig
-import net.neoforged.neoforge.fluids.FluidType
+import net.minecraftforge.fluids.FluidType
+import net.minecraftforge.fml.config.ModConfig
 
 
 object MekEmpTierConfig : MekanismNestConfig(ModConfig.Type.SERVER, "tiers") {
 
     @NestConfig
-    @ConfigTranslation(MekEmpConfigTranslations.TIER_GAUGE_DROPPER)
+    @Comment("Configurable Gauge Dropper")
     object GaugeDropper {
-        val basicRate = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_BASIC_RATE.applyToBuilder(builder)
+        val basicRate = builder.comment("Configurable basic rate for Basic Gauge Dropper")
             .defineInRange("basicRate", 256 * 3, 1, Int.MAX_VALUE).cached()
-        val basicCapacity = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_BASIC_CAPACITY.applyToBuilder(builder)
+        val basicCapacity = builder.comment("Configurable basic capacity for Basic Gauge Dropper")
             .defineInRange("basicCapacity", 16 * FluidType.BUCKET_VOLUME * 3, 1, Int.MAX_VALUE).cached()
-        val advancedRate = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ADVANCED_RATE.applyToBuilder(builder)
+        val advancedRate = builder.comment("Configurable advanced rate for Advanced Gauge Dropper")
             .defineInRange("advancedRate", 256 * 5, 1, Int.MAX_VALUE).cached()
-        val advancedCapacity = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ADVANCED_CAPACITY.applyToBuilder(builder)
+        val advancedCapacity = builder.comment("Configurable advanced capacity for Advanced Gauge Dropper")
             .defineInRange("advancedCapacity", 16 * FluidType.BUCKET_VOLUME * 5, 1, Int.MAX_VALUE).cached()
-        val eliteRate = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ELITE_RATE.applyToBuilder(builder)
+        val eliteRate = builder.comment("Configurable elite rate for Elite Gauge Dropper")
             .defineInRange("eliteRate", 256 * 7, 1, Int.MAX_VALUE).cached()
-        val eliteCapacity = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ELITE_CAPACITY.applyToBuilder(builder)
+        val eliteCapacity = builder.comment("Configurable elite capacity for Elite Gauge Dropper")
             .defineInRange("eliteCapacity", 16 * FluidType.BUCKET_VOLUME * 7, 1, Int.MAX_VALUE).cached()
-        val ultimateRate = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ULTIMATE_RATE.applyToBuilder(builder)
+        val ultimateRate = builder.comment("Configurable ultimate rate for Ultimate Gauge Dropper")
             .defineInRange("ultimateRate", 256 * 9, 1, Int.MAX_VALUE).cached()
-        val ultimateCapacity = MekEmpConfigTranslations.TIER_GAUGE_DROPPER_ULTIMATE_CAPACITY.applyToBuilder(builder)
+        val ultimateCapacity = builder.comment("Configurable ultimate capacity for Ultimate Gauge Dropper")
             .defineInRange("ultimateCapacity", 16 * FluidType.BUCKET_VOLUME * 9, 1, Int.MAX_VALUE).cached()
     }
-
-    override fun getTranslation() = "Tier Config"
 }

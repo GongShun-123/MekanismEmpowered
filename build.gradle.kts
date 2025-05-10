@@ -25,6 +25,7 @@ plugins {
 
 val modId = Constants.Mod.ID
 val mcVersion: String = libs.versions.minecraft.get()
+val forgeVersion: String = libs.versions.forge.get()
 val kffVersion: String = libs.versions.kotlinForForge.get()
 
 val jdkVersion = Constants.Dev.JDK_VERSION
@@ -76,6 +77,8 @@ val coreSourceSet = sourceSets.create("core") {
     compileClasspath += coreApiSourceSet.output
     runtimeClasspath += coreApiSourceSet.output
 
+    ext.set("refMap", "${modId}_core.refmap.json")
+
     resources {
         srcDirs(
             generateCoreModMetadata.get().outputs.files
@@ -102,6 +105,14 @@ val dataSourceSet = sourceSets.create("data") {
     runtimeClasspath += coreSourceSet.output + mainSourceSet.runtimeClasspath + mainSourceSet.output
 }
 
+mixin {
+    add(mainSourceSet, "${modId}.refmap.json")
+    add(coreSourceSet, "${modId}_core.refmap.json")
+
+    config("${modId}.mixins.json")
+    config("${modId}_core.mixins.json")
+}
+
 dependencies {
     run {
         val mainApiCompileOnly by configurations.getting
@@ -115,52 +126,59 @@ dependencies {
         coreCompileOnly(libs.mekanism)
         coreCompileOnly(libs.kotlinForForge)
         coreCompileOnly(libs.easyNestConfig)
+        coreCompileOnly(libs.mixinExtrasCommon)
+        coreCompileOnly(libs.mixinExtrasForge)
 
         val coreJarJar by configurations.getting
-        coreJarJar(variantOf(libs.mixinExtras, "slim")) {
+
+        coreJarJar(variantOf(libs.mixinExtrasForge, "slim")) {
             version {
                 strictly("[$this,)")
                 prefer(this.toString())
             }
         }
 
-        coreJarJar(libs.easyNestConfig) {
-            version {
-                strictly("[$this,)")
-                prefer(this.toString())
-            }
-        }
+        coreJarJar(libs.easyNestConfig)
+
+        val coreAnnotationProcessor by configurations.getting
+
+        coreAnnotationProcessor(variantOf(libs.mixin, "processor"))
+        coreAnnotationProcessor(libs.mixinExtrasCommon)
     }
 
     run {
-        val coreApiCompileOnly by configurations.getting
+        val coreApiCompileOnly by configurations.getting {
+            extendsFrom(configurations.getByName("modCompileOnly"))
+        }
 
         coreApiCompileOnly(libs.kotlinForForge)
         coreApiCompileOnly(variantOf(libs.mekanism, "api"))
     }
 
-    implementation(libs.kotlinForForge)
-    implementation(libs.mekanism)
-    implementation(variantOf(libs.mekanism, "generators"))
+    modImplementation(libs.kotlinForForge)
+    modImplementation(libs.mekanism)
 
-    compileOnly(variantOf(libs.mekanism, "all"))
+    modRuntimeOnly(variantOf(libs.mekanism, "generators"))
 
-    compileOnly(libs.mekanismExtras)
+    modCompileOnly(variantOf(libs.mekanism, "generators"))
+    modCompileOnly(libs.mekanismExtras)
 
-    localRuntime(libs.jei)
+    modRuntimeOnly(libs.jei)
 
     if (loadMekExt) {
-        localRuntime(libs.mekanismExtras)
+        modRuntimeOnly(libs.mekanismExtras)
     }
 
-    implementation(libs.easyNestConfig)
+    modImplementation(libs.easyNestConfig)
 
-    annotationProcessor(libs.mixinExtras)
-    implementation(libs.mixinExtras) { isTransitive = false }
+    annotationProcessor(variantOf(libs.mixin, "processor"))
+    annotationProcessor(libs.mixinExtrasCommon)
+    compileOnly(libs.mixinExtrasCommon)
+    implementation(libs.mixinExtrasForge)
 }
 
-neoForge {
-    version = libs.versions.neoforge.get()
+legacyForge {
+    version = "$mcVersion-$forgeVersion"
 
     addModdingDependenciesTo(coreApiSourceSet)
     addModdingDependenciesTo(coreSourceSet)
@@ -184,7 +202,8 @@ neoForge {
         create("client") {
             client()
             gameDirectory.set(rootProject.file("run"))
-            systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug=true")
             jvmArgument("-Dmixin.debug.export=$exportMixin")
             jvmArgument("-XX:+AllowEnhancedClassRedefinition")
         }
@@ -193,7 +212,8 @@ neoForge {
             server()
             gameDirectory.set(rootProject.file("run-server"))
             programArgument("--nogui")
-            systemProperty("neoforge.enabledGameTestNamespaces", modId)
+            systemProperty("forge.enabledGameTestNamespaces", modId)
+            jvmArgument("-Dmixin.debug=true")
             jvmArgument("-Dmixin.debug.export=$exportMixin")
             jvmArgument("-XX:+AllowEnhancedClassRedefinition")
         }
@@ -236,14 +256,14 @@ neoForge {
     ideSyncTask(generateCoreModMetadata)
 }
 
-fun setupMetaDataTask(modId: String, modName: String, task: TaskProvider<ProcessResources>, deps: List<ModDep>, at: String? = null) {
+fun setupMetaDataTask(modId: String, modName: String, task: TaskProvider<ProcessResources>, deps: List<ModDep>) {
     task {
         val replaceProperties = mutableMapOf(
             "version" to version,
             "group" to project.group,
             "minecraft_version" to mcVersion,
-            "mod_loader" to "kotlinforforge",
-            "mod_loader_version_range" to "[$kffVersion,)",
+            "mod_loader" to "javafml",
+            "mod_loader_version_range" to "[${extractVersionSegments(forgeVersion)},)",
             "mod_name" to modName,
             "mod_author" to Constants.Mod.AUTHOR,
             "mod_id" to modId,
@@ -251,13 +271,8 @@ fun setupMetaDataTask(modId: String, modName: String, task: TaskProvider<Process
             "description" to Constants.Mod.DESCRIPTION,
             "display_url" to Constants.Mod.REPOSITORY_URL,
             "issue_tracker_url" to Constants.Mod.ISSUE_TRACKER_URL,
-            "access_transformers" to "",
             "dependencies" to buildDeps(*deps.toTypedArray(), modId = modId),
         )
-
-        if (at != null) {
-            replaceProperties["access_transformers"] = "accessTransformers = [ { file = \"$at\" } ]"
-        }
 
         inputs.properties(replaceProperties)
         filter<ReplaceTokens>("beginToken" to "\${", "endToken" to "}", "tokens" to replaceProperties)
@@ -266,9 +281,21 @@ fun setupMetaDataTask(modId: String, modName: String, task: TaskProvider<Process
     }
 }
 
-fun setupJarTask(modName: String, task: TaskProvider<Jar>, vararg sourceSets: SourceSetOutput) = setupJarTask(modName, false, task, null, *sourceSets)
-fun setupJarTask(modName: String, renameFile: Boolean, task: TaskProvider<Jar>, classifier: String? = null, vararg sourceSets: SourceSetOutput) {
+fun setupJarTask(modName: String, modID: String, task: TaskProvider<Jar>, sourceSet: SourceSet, additionalSourceSets: List<SourceSet> = emptyList()) =
+    setupJarTask(modName, modID, false, task, null, sourceSet, additionalSourceSets)
+
+fun setupJarTask(
+    modName: String,
+    id: String,
+    renameFile: Boolean,
+    task: TaskProvider<Jar>,
+    classifier: String? = null,
+    sourceSet: SourceSet,
+    additionalSourceSets: List<SourceSet> = emptyList()
+) {
     val cleanModName = modName.replace(" ", "").replace(":", "")
+    val newName = "$cleanModName-$mcVersion-${project.version}.jar"
+
     task {
         manifest {
             attributes(
@@ -282,31 +309,45 @@ fun setupJarTask(modName: String, renameFile: Boolean, task: TaskProvider<Jar>, 
                 "Timestamp" to System.currentTimeMillis(),
                 "Built-On-Java" to "${System.getProperty("java.vm.VERSION")} (${System.getProperty("java.vm.vendor")})",
                 "Built-On-Minecraft" to mcVersion,
+                "MixinConfigs" to "$id.mixins.json"
             )
         }
 
         archiveClassifier.set(classifier)
         if (renameFile) {
-            archiveFileName.set("$cleanModName-$mcVersion-${project.version}.jar")
+            archiveFileName.set(newName)
         }
-        from(*sourceSets)
+        from(sourceSet.output, additionalSourceSets.map { it.output }.toTypedArray())
+    }
+
+    if (sourceSet.name != "main") {
+        obfuscation {
+            reobfuscate(task, sourceSet) {
+                dependsOn("compileJava")
+
+                if (renameFile) {
+                    archiveFileName.set(newName)
+                }
+            }
+        }
     }
 }
 
 val baseDependencies = listOf(
-    ModDep("neoforge", libs.versions.neoforge.get()),
+    ModDep("forge", libs.versions.forge.get()),
     ModDep("minecraft", mcVersion),
     ModDep("kotlinforforge", kffVersion),
-    ModDep("mekanism", "1.21.1-10.7.79", ordering = Order.AFTER),
+    ModDep("mekanism", "1.20.1-10.4", ordering = Order.AFTER),
 )
 val mainModDependencies = baseDependencies.toMutableList().apply {
-    add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION, type = DependencyType.OPTIONAL, ordering = Order.AFTER))
-    add(ModDep("mekanism_extras", "1.21.1-1.2.1", type = DependencyType.INCOMPATIBLE, reason = "Incompatible Mixins"))
-    add(ModDep("mekanism_unleashed", "0.0.0", type = DependencyType.INCOMPATIBLE, reason = "Because Advanced Speed Upgrade becomes meaningless"))
+    add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION, ordering = Order.AFTER))
+    add(ModDep("mekanism_extras", "999.999.999-INCOMPATIBLE", false))
+    add(ModDep("mekanismtweaks", "999.999.999-INCOMPATIBLE", false))
+    add(ModDep("mekanismupgradesreborn", "999.999.999-INCOMPATIBLE", false))
 }
 
 setupMetaDataTask(modId, Constants.Mod.NAME, generateModMetadata, mainModDependencies)
-setupMetaDataTask("${modId}_core", "${Constants.Mod.NAME} Core", generateCoreModMetadata, baseDependencies, at = "accesstransformer.cfg")
+setupMetaDataTask("${modId}_core", "${Constants.Mod.NAME} Core", generateCoreModMetadata, baseDependencies)
 
 tasks {
     withType<JavaCompile> {
@@ -335,7 +376,10 @@ tasks {
     }
 
     processResources {
-        dependsOn(generateModMetadata, generateCoreModMetadata)
+        dependsOn(
+            generateModMetadata,
+            generateCoreModMetadata
+        )
     }
 
     named<Jar>("sourcesJar") {
@@ -348,31 +392,34 @@ tasks {
         )
     }
 
-    setupJarTask(Constants.Mod.NAME, jar, mainSourceSet.output, mainApiSourceSet.output)
+    setupJarTask(Constants.Mod.NAME, Constants.Mod.ID, jar, mainSourceSet, listOf(mainApiSourceSet))
 
     setupJarTask(
         Constants.Mod.NAME,
+        Constants.Mod.ID,
         false,
         register<Jar>("apiJar"),
         "api",
-        mainApiSourceSet.output,
+        mainApiSourceSet
     )
 
     setupJarTask(
         "${Constants.Mod.NAME} Core",
+        Constants.Mod.ID + "_core",
         true,
         register<Jar>("coreJar"),
         "core",
-        coreSourceSet.output,
-        coreApiSourceSet.output,
+        coreSourceSet,
+        listOf(coreApiSourceSet)
     )
 
     setupJarTask(
         "${Constants.Mod.NAME} Core",
+        Constants.Mod.ID + "_core",
         false,
         register<Jar>("coreApiJar"),
         "core-api",
-        coreApiSourceSet.output,
+        coreApiSourceSet
     )
 
     build {
@@ -422,7 +469,8 @@ tasks {
 
             addRequirement("mekanism-empowered-core")
 //            addOptional("mekanism-extras")
-            addIncompatibility("mekanism-unleashed")
+            addIncompatibility("mekanism-tweaks")
+            addIncompatibility("mekanism-upgrades-reborn")
         }
 
         upload(Constants.Publisher.CURSEFORGE_CORE_ID, named("coreJar")) {

@@ -14,23 +14,12 @@ enum class Side {
 }
 
 @Suppress("unused")
-enum class DisplayTest {
-    MATCH_VERSION, IGNORE_SERVER_VERSION, IGNORE_ALL_VERSION, NONE;
-}
-
-@Suppress("unused")
-enum class DependencyType {
-    REQUIRED, OPTIONAL, INCOMPATIBLE, DISCOURAGED;
-}
-
-@Suppress("unused")
 data class ModDep(
     val id: String,
     val version: String,
-    val type: DependencyType = DependencyType.REQUIRED,
+    val mandatory: Boolean = true,
     val ordering: Order = Order.NONE,
-    val side: Side = Side.BOTH,
-    val reason: String? = null
+    val side: Side = Side.BOTH
 ) {
     init {
         if (version.isEmpty()) {
@@ -44,15 +33,15 @@ fun buildDeps(
     vararg deps: ModDep,
     modId: String = Constants.Mod.ID,
 ): String {
-    return deps.joinToString(separator = "\n") { (id, version, type, ordering, side, reason) ->
+    return deps.joinToString(separator = "\n") { (id, version, mandatory, ordering, side) ->
         """
             [[dependencies.$modId]]
             modId = "$id"
             versionRange = "[$version,)"
-            type = "$type"
+            mandatory = $mandatory
             ordering = "$ordering"
             side = "$side"
-        """.trimIndent() + (reason?.let { "\nreason = \"$it\"" } ?: "")
+        """.trimIndent()
     }
 }
 

@@ -12,28 +12,34 @@ import mekanism.common.tile.base.TileEntityMekanism
 import mekanism.common.tile.interfaces.ISideConfiguration
 import mekanism.common.util.MekanismUtils
 import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.narration.NarrationElementOutput
 import java.util.function.Supplier
 
 
 class GuiSideInserterConfigurationTab<TILE>(
     gui: IGuiWrapper, tile: TILE, elementSupplier: Supplier<GuiSideInserterConfigurationTab<TILE>>
 ) : GuiWindowCreatorTab<TILE, GuiSideInserterConfigurationTab<TILE>>(
-    MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "configuration.png"), gui, tile, gui.xSize, 62, 26, 18, false, elementSupplier
+    MekanismUtils.getResource(MekanismUtils.ResourceType.GUI, "configuration.png"), gui, tile, gui.width, 62, 26, 18, false, elementSupplier
 ) where TILE : TileEntityMekanism, TILE : ISideConfiguration {
     companion object {
         private val WINDOW_DATA = SelectedWindowData(MekEmpWindowType.INSERTER)
     }
 
-    init {
-        setTooltip(MekEmpLang.INSERTER_CONFIG)
+    override fun renderToolTip(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int) {
+        super.renderToolTip(guiGraphics, mouseX, mouseY)
+        displayTooltips(guiGraphics, mouseX, mouseY, MekEmpLang.INSERTER_CONFIG.translate())
     }
 
-    override fun createWindow(windowData: SelectedWindowData) =
-        GuiSideInserterConfiguration<TILE>(gui(), (guiWidth - 156) / 2, 15, dataSource, windowData)
-
-    override fun getNextWindowData() = WINDOW_DATA
+    override fun createWindow() =
+        GuiSideInserterConfiguration<TILE>(gui(), (guiWidth - 156) / 2, 15, dataSource, WINDOW_DATA)
 
     override fun colorTab(guiGraphics: GuiGraphics) {
         MekanismRenderer.color(guiGraphics, SpecialColors.TAB_CONFIGURATION)
+    }
+
+    override fun renderWidget(p0: GuiGraphics, p1: Int, p2: Int, p3: Float) {
+    }
+
+    override fun updateWidgetNarration(p0: NarrationElementOutput) {
     }
 }

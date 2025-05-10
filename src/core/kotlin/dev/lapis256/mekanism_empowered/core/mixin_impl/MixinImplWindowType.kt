@@ -4,7 +4,7 @@ import dev.lapis256.mekanism_empowered.core.common.window_type.AdditionalWindowT
 import mekanism.common.inventory.container.SelectedWindowData
 
 
-class MixinImplWindowType(constructor: (String, Int, String, Boolean, Byte) -> SelectedWindowData.WindowType) {
+class MixinImplWindowType(constructor: (String, Int, String, Byte) -> SelectedWindowData.WindowType) {
     private val loader = AdditionalWindowTypeLoader(constructor)
 
     fun initAdditionalWindowTypes(builtInUpgrades: Array<SelectedWindowData.WindowType>) = loader.initAdditionalEnumEntry(builtInUpgrades)

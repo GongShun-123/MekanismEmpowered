@@ -38,7 +38,7 @@ public class MixinTileComponentUpgrade {
     @Definition(id = "upgrade", local = @Local(type = Upgrade.class))
     @Definition(id = "MUFFLING", field = "Lmekanism/api/Upgrade;MUFFLING:Lmekanism/api/Upgrade;")
     @Expression("upgrade == MUFFLING")
-    @ModifyExpressionValue(method = "addUpgrades(Lmekanism/api/Upgrade;II)I", at = @At("MIXINEXTRAS:EXPRESSION"))
+    @ModifyExpressionValue(method = "addUpgrades(Lmekanism/api/Upgrade;I)I", at = @At("MIXINEXTRAS:EXPRESSION"))
     private boolean mekanismEmpowered$modifyClientSyncTarget(boolean original, @Local(argsOnly = true) Upgrade upgrade) {
         return original || MixinImplTileComponentUpgrade.isAppendedClientSyncTarget(upgrade);
     }
