@@ -452,19 +452,19 @@ tasks {
         disableVersionDetection()
 
         fun UploadArtifact.setShared() {
-            releaseType = CFGConstants.RELEASE_TYPE_ALPHA
+            releaseType = CFGConstants.RELEASE_TYPE_RELEASE
             changelog = System.getenv("CHANGELOG") ?: "No changelog provided"
             changelogType = CFGConstants.CHANGELOG_MARKDOWN
             displayName = "[$mcVersion] v${project.version}"
             addGameVersion(mcVersion)
             addEnvironment("Client", "Server")
-            addModLoader("NeoForge")
+            addModLoader("Forge")
             addJavaVersion("Java $jdkVersion")
 
             addRequirement("kotlin-for-forge", "mekanism")
         }
 
-        upload(Constants.Publisher.CURSEFORGE_MAIN_ID, jar) {
+        upload(Constants.Publisher.CURSEFORGE_MAIN_ID, named("reobfJar")) {
             setShared()
 
             addRequirement("mekanism-empowered-core")
@@ -473,7 +473,7 @@ tasks {
             addIncompatibility("mekanism-upgrades-reborn")
         }
 
-        upload(Constants.Publisher.CURSEFORGE_CORE_ID, named("coreJar")) {
+        upload(Constants.Publisher.CURSEFORGE_CORE_ID, named("reobfCoreJar")) {
             setShared()
         }
     }
@@ -496,7 +496,7 @@ run {
                 from(components["java"])
                 version = "$mcVersion-${project.version}"
 
-                setArtifacts(listOf(tasks["jar"], tasks["sourcesJar"], tasks["apiJar"], tasks["coreJar"], tasks["coreApiJar"]))
+                setArtifacts(listOf(tasks["reobfJar"], tasks["sourcesJar"], tasks["reobfApiJar"], tasks["reobfCoreJar"], tasks["reobfCoreApiJar"]))
                 artifact(layout.buildDirectory.file("copyAccessTransformersPublications/0-accesstransformer.cfg")) {
                     classifier = "accesstransformer"
                     extension = "cfg"
