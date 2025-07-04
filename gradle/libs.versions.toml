@@ -1,6 +1,6 @@
 [versions]
 plugin_kotlin = "2.0.0"
-plugin_moddev = "2.0.+"
+plugin_moddev = "2.0.88"  # TODO: Incompatible with https://github.com/neoforged/ModDevGradle/pull/256
 plugin_curseForge = "1.+"
 plugin_modrinth = "2.+"
 
