@@ -34,6 +34,7 @@ val jvmVendor = Constants.Dev.JVM_VENDOR
 
 val exportMixin = true
 val loadMekExt = false
+val loadAddons = true
 
 
 base {
@@ -162,11 +163,19 @@ dependencies {
 
     modCompileOnly(variantOf(libs.mekanism, "generators"))
     modCompileOnly(libs.mekanismExtras)
+    modCompileOnly(libs.evolvedMekanism)
+    modCompileOnly(libs.mekanismElements)
 
     modRuntimeOnly(libs.jei)
 
     if (loadMekExt) {
         modRuntimeOnly(libs.mekanismExtras)
+    }
+
+    if (loadAddons) {
+        modRuntimeOnly(libs.igleelib)
+        modRuntimeOnly(libs.evolvedMekanism)
+        modRuntimeOnly(libs.mekanismElements)
     }
 
     modImplementation(libs.easyNestConfig)
@@ -341,6 +350,8 @@ val baseDependencies = listOf(
 )
 val mainModDependencies = baseDependencies.toMutableList().apply {
     add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION, ordering = Order.AFTER))
+    add(ModDep("evolvedmekanism", "1.1-beta", ordering = Order.AFTER, mandatory = false))
+    add(ModDep("mekanismelements", "2.3", ordering = Order.AFTER, mandatory = false))
     add(ModDep("mekanism_extras", "999.999.999-INCOMPATIBLE", false))
     add(ModDep("mekanismtweaks", "999.999.999-INCOMPATIBLE", false))
     add(ModDep("mekanismupgradesreborn", "999.999.999-INCOMPATIBLE", false))
@@ -469,6 +480,8 @@ tasks {
 
             addRequirement("mekanism-empowered-core")
 //            addOptional("mekanism-extras")
+            addOptional("evolved-mekanism")
+            addOptional("mekanism-elements")
             addIncompatibility("mekanism-tweaks")
             addIncompatibility("mekanism-upgrades-reborn")
         }

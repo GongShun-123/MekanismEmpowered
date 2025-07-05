@@ -17,7 +17,6 @@ import mekanism.common.tile.machine.TileEntityIsotopicCentrifuge;
 import mekanism.common.tile.machine.TileEntityPigmentMixer;
 import mekanism.common.tile.machine.TileEntityRotaryCondensentrator;
 import mekanism.common.tile.prefab.TileEntityProgressMachine;
-import mekanism.common.tile.qio.TileEntityQIOFilterHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -49,6 +48,8 @@ class MixinModifyRecalculationTarget {
             "com.jerry.mekextras.common.tile.factory.TileEntityAdvancedFactory",
             "com.jerry.mekextras.common.tile.factory.TileEntityItemStackChemicalToItemStackAdvancedFactory",
             "com.jerry.mekextras.common.tile.machine.TileEntityAdvanceElectricPump",
+
+            "com.fxd927.mekanismelements.common.tile.prefab.MSTileEntityProgressMachine"
         },
         remap = false
     )

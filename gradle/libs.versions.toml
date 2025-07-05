@@ -16,6 +16,9 @@ easyNestConfig = "3.0.0"
 jei = "15.20.0.106"
 mekanism = "1.20.1-10.4.15.75"
 mekanismExtras = "6498454"
+igleelib = "5329230"
+evolvedMekanism = "6456494"
+mekanismElements = "6537553"
 
 
 [libraries]
@@ -28,6 +31,9 @@ easyNestConfig = { module = "dev.lapis256:EasyNestConfig", version.ref = "easyNe
 jei = { module = "mezz.jei:jei-1.20.1-forge", version.ref = "jei" }
 mekanism = { module = "mekanism:Mekanism", version.ref = "mekanism" }
 mekanismExtras = { module = "curse.maven:mekanism-extras-1026040", version.ref = "mekanismExtras" }
+igleelib = { module = "curse.maven:iglee-library-541199", version.ref = "igleelib" }
+evolvedMekanism = { module = "curse.maven:evolved-mekanism-1230085", version.ref = "evolvedMekanism" }
+mekanismElements = { module = "curse.maven:mekanism-elements-1103224", version.ref = "mekanismElements" }
 
 
 [plugins]

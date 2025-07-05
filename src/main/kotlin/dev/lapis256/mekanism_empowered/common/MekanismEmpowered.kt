@@ -6,6 +6,7 @@ import dev.lapis256.mekanism_empowered.common.init.MekEmpCreativeTab
 import dev.lapis256.mekanism_empowered.common.init.MekEmpItems
 import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades
 import dev.lapis256.mekanism_empowered.common.network.MekEmpPacketHandler
+import dev.lapis256.mekanism_empowered.integration.Integrations
 import mekanism.common.lib.Version
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
@@ -27,6 +28,8 @@ class MekanismEmpowered(context: FMLJavaModLoadingContext) {
 
         MekEmpItems.REGISTRY.register(modEventBus)
         MekEmpCreativeTab.REGISTRY.register(modEventBus)
+
+        Integrations.initCommon()
 
         instance = this
     }
