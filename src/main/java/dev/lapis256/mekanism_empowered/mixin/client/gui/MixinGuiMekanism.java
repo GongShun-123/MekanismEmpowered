@@ -20,7 +20,7 @@ public abstract class MixinGuiMekanism extends Screen {
     @Shadow
     protected abstract <T extends GuiElement> T addRenderableWidget(T element);
 
-    @Inject(method = "containerTick", at = @At("TAIL"))
+    @Inject(method = "containerTick()V", at = @At("TAIL"))
     protected void mekanismEmpowered$containerTick(CallbackInfo ci) {
     }
 }
