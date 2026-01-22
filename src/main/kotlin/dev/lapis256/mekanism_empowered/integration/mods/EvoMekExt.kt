@@ -1,12 +1,15 @@
 package dev.lapis256.mekanism_empowered.integration.mods
 
+import com.jerry.mekanism_extras.common.util.ExtraEnumUtils
 import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.ITEM_IN_OUT_MACHINE_UPGRADES
 import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil
 import dev.lapis256.mekanism_empowered.integration.ModIntegration
+import fr.iglee42.evolvedmekanism.registries.EMFactoryType
 import io.github.masyumero.emextras.common.content.blocktype.EMExtraFactoryType
 import io.github.masyumero.emextras.common.registry.EMExtrasBlockType
 import io.github.masyumero.emextras.common.util.EMExtraEnumUtils
 import mekanism.api.Upgrade
+import mekanism.common.content.blocktype.FactoryType
 
 
 internal object EvoMekExt : ModIntegration {
@@ -24,15 +27,18 @@ internal object EvoMekExt : ModIntegration {
         addSupportedFactoryUpgrades(EMExtraFactoryType.INFUSING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         addSupportedFactoryUpgrades(EMExtraFactoryType.PURIFYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         addSupportedFactoryUpgrades(EMExtraFactoryType.INJECTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
+        addSupportedFactoryUpgrades(EMFactoryType.ALLOYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
     }
 
     private fun addSupportedFactoryUpgrades(type: EMExtraFactoryType, vararg upgrades: Upgrade) {
         for (tier in EMExtraEnumUtils.EMEXTRA_FACTORY_TIERS) {
-            if (type != EMExtraFactoryType.ALLOYING && !tier.isEvolved) {
-                continue
-            }
-
             AdditionalUpgradeUtil.addSupported(EMExtrasBlockType.getEMExtraFactory(tier, type), *upgrades)
+        }
+    }
+
+    private fun addSupportedFactoryUpgrades(type: FactoryType, vararg upgrades: Upgrade) {
+        for (tier in ExtraEnumUtils.ADVANCED_FACTORY_TIERS) {
+            AdditionalUpgradeUtil.addSupported(EMExtrasBlockType.getAdvancedFactory(tier, type), *upgrades)
         }
     }
 }
