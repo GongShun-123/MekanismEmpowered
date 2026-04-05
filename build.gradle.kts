@@ -33,7 +33,6 @@ val jvmVendor = Constants.Dev.JVM_VENDOR
 
 
 val exportMixin = true
-val loadMekExt = false
 val loadAddons = true
 
 
@@ -77,8 +76,6 @@ val mainApiSourceSet: SourceSet = sourceSets.create("main.api", Action {
 val coreSourceSet: SourceSet = sourceSets.create("core", Action {
     compileClasspath += coreApiSourceSet.output
     runtimeClasspath += coreApiSourceSet.output
-
-    ext.set("refMap", "${modId}_core.refmap.json")
 
     resources {
         srcDirs(
@@ -362,20 +359,20 @@ fun setupJarTask(
 }
 
 val baseDependencies = listOf(
-    ModDep("forge", libs.versions.forge.get()),
-    ModDep("minecraft", mcVersion),
-    ModDep("kotlinforforge", kffVersion),
-    ModDep("mekanism", "10.4.16", ordering = Order.AFTER),
+    ModDep("forge", libs.versions.forge..<"48.0"),
+    ModDep("minecraft", mcVersion.eq()),
+    ModDep("kotlinforforge", kffVersion.gte()),
+    ModDep("mekanism", "10.4.16".gte(), ordering = Order.AFTER),
 )
 val mainModDependencies = baseDependencies.toMutableList().apply {
-    add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION, ordering = Order.AFTER))
-    add(ModDep("evolvedmekanism", "1.2.1", ordering = Order.AFTER, mandatory = false))
-    add(ModDep("mekanismelements", "2.3", ordering = Order.AFTER, mandatory = false))
-    add(ModDep("mekanism_extras", "1.20.1-1.4.6", ordering = Order.AFTER, mandatory = false))
-    add(ModDep("mekmm", "1.1.0", ordering = Order.AFTER, mandatory = false))
-    add(ModDep("emextras", "1.3.5", ordering = Order.AFTER, mandatory = false))
-    add(ModDep("mekanismtweaks", "999.999.999-INCOMPATIBLE", false))
-    add(ModDep("mekanismupgradesreborn", "999.999.999-INCOMPATIBLE", false))
+    add(ModDep("mekanism_empowered_core", Constants.Mod.VERSION.eq(), ordering = Order.AFTER))
+    add(ModDep.optional("evolvedmekanism", "1.2.1".gte()))
+    add(ModDep.optional("mekanismelements", "2.3".gte()))
+    add(ModDep.optional("mekanism_extras", "1.20.1-1.4.6".gte()))
+    add(ModDep.optional("mekmm", "1.1.0".gte()))
+    add(ModDep.optional("emextras", "1.3.5".gte()))
+    add(ModDep.incompatible("mekanismtweaks"))
+    add(ModDep.incompatible("mekanismupgradesreborn"))
 }
 
 setupMetaDataTask(modId, Constants.Mod.NAME, generateModMetadata, mainModDependencies)
