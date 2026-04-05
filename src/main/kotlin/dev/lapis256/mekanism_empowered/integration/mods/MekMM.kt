@@ -12,12 +12,18 @@ import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil
 import dev.lapis256.mekanism_empowered.integration.ModIntegration
 import mekanism.api.Upgrade
 import mekanism.common.util.EnumUtils
+import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 
 
 internal object MekMM : ModIntegration {
     override val modId = "mekmm"
 
-    override fun initCommon() {
+    override fun initCommon(modEventBus: IEventBus) {
+        modEventBus.addListener { _: FMLCommonSetupEvent -> addSupportedFactoryUpgrades() }
+    }
+
+    private fun addSupportedFactoryUpgrades() {
         registerFactoryUpgrades(AdvancedFactoryType.PRESSURISED_REACTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         registerFactoryUpgrades(AdvancedFactoryType.LIQUIFYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
 
@@ -45,17 +51,24 @@ internal object MekMM : ModIntegration {
         registerFactoryUpgrades(MoreMachineFactoryType.CNC_LATHING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         registerFactoryUpgrades(MoreMachineFactoryType.CNC_ROLLING_MILL, *ITEM_IN_OUT_MACHINE_UPGRADES)
         registerFactoryUpgrades(MoreMachineFactoryType.REPLICATING, *ITEM_IN_OUT_MACHINE_UPGRADES)
+
+//        AdditionalUpgradeUtil.addSupported(LargeMachineBlockTypes.LARGE_ROTARY_CONDENSENTRATOR, *SPEED_AND_ENERGY_UPGRADES)
+//        AdditionalUpgradeUtil.addSupported(LargeMachineBlockTypes.LARGE_CHEMICAL_INFUSER, *SPEED_AND_ENERGY_UPGRADES)
+//        AdditionalUpgradeUtil.addSupported(LargeMachineBlockTypes.LARGE_ELECTROLYTIC_SEPARATOR, *SPEED_AND_ENERGY_UPGRADES)
+//        AdditionalUpgradeUtil.addSupported(LargeMachineBlockTypes.LARGE_SOLAR_NEUTRON_ACTIVATOR, MekEmpUpgrade.EMPOWERED_SPEED)
     }
 
     private fun registerFactoryUpgrades(type: AdvancedFactoryType, vararg upgrades: Upgrade) {
         for (tier in EnumUtils.FACTORY_TIERS) {
-            AdditionalUpgradeUtil.addSupported(AdvancedFactoryBlockTypes.getAdvancedFactory(tier, type), *upgrades)
+            val blockType = AdvancedFactoryBlockTypes.getAdvancedFactory(tier, type) ?: continue
+            AdditionalUpgradeUtil.addSupported(blockType, *upgrades)
         }
     }
 
     private fun registerFactoryUpgrades(type: MoreMachineFactoryType, vararg upgrades: Upgrade) {
         for (tier in EnumUtils.FACTORY_TIERS) {
-            AdditionalUpgradeUtil.addSupported(MoreMachineBlockTypes.getMoreMachineFactory(tier, type), *upgrades)
+            val blockType = MoreMachineBlockTypes.getMoreMachineFactory(tier, type) ?: continue
+            AdditionalUpgradeUtil.addSupported(blockType, *upgrades)
         }
     }
 }

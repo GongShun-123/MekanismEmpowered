@@ -2,6 +2,7 @@ package dev.lapis256.mekanism_empowered.integration
 
 import dev.lapis256.mekanism_empowered.integration.mods.*
 import dev.lapis256.mekanism_empowered.integration.provider.IntegrationProvider
+import net.minecraftforge.eventbus.api.IEventBus
 import kotlin.reflect.KClass
 
 
@@ -27,11 +28,11 @@ internal object Integrations {
 
     inline fun <reified T : IntegrationProvider> getProviders() = getProviders(T::class)
 
-    fun initCommon() {
-        integrations.forEach(ModIntegration::initCommonIntegration)
+    fun initCommon(modEventBus: IEventBus) {
+        integrations.forEach { it.initCommonIntegration(modEventBus) }
     }
 
-    fun initClient() {
-        integrations.forEach(ModIntegration::initClientIntegration)
+    fun initClient(modEventBus: IEventBus) {
+        integrations.forEach { it.initClientIntegration(modEventBus) }
     }
 }

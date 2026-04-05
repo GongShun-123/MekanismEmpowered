@@ -1,6 +1,7 @@
 package dev.lapis256.mekanism_empowered.common
 
 import dev.lapis256.mekanism_empowered.api.MekanismEmpoweredAPI
+import dev.lapis256.mekanism_empowered.client.MekanismEmpoweredClient
 import dev.lapis256.mekanism_empowered.common.config.MekEmpConfig
 import dev.lapis256.mekanism_empowered.common.init.MekEmpCreativeTab
 import dev.lapis256.mekanism_empowered.common.init.MekEmpItems
@@ -8,7 +9,10 @@ import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades
 import dev.lapis256.mekanism_empowered.common.network.MekEmpPacketHandler
 import dev.lapis256.mekanism_empowered.integration.Integrations
 import mekanism.common.lib.Version
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,16 +24,23 @@ class MekanismEmpowered(context: FMLJavaModLoadingContext) {
         MekEmpConfig.registerConfigs(context)
 
         MekEmpUpgrades.registerUpgradeInfo()
-        MekEmpUpgrades.registerSupportedUpgrades()
 
         val modEventBus = context.modEventBus
+        modEventBus.addListener { _: FMLCommonSetupEvent -> MekEmpUpgrades.registerSupportedUpgrades() }
+
 
         modEventBus.addListener(MekEmpConfig::onConfigLoad)
 
         MekEmpItems.REGISTRY.register(modEventBus)
         MekEmpCreativeTab.REGISTRY.register(modEventBus)
 
-        Integrations.initCommon()
+        Integrations.initCommon(modEventBus)
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT) {
+            Runnable {
+                MekanismEmpoweredClient.init(modEventBus)
+            }
+        }
 
         instance = this
     }

@@ -7,12 +7,13 @@ import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil
 import dev.lapis256.mekanism_empowered.integration.IntegrationProviderRegistry
 import dev.lapis256.mekanism_empowered.integration.ModIntegration
 import dev.lapis256.mekanism_empowered.integration.provider.FactoryUpgradeIntegration
+import net.minecraftforge.eventbus.api.IEventBus
 
 
 internal object MekExt : ModIntegration {
     override val modId = "mekanism_extras"
 
-    override fun initCommon() {
+    override fun initCommon(modEventBus: IEventBus) {
         AdditionalUpgradeUtil.addSupported(ExtraBlockType.ADVANCED_ELECTRIC_PUMP, *SPEED_AND_ENERGY_UPGRADES)
     }
 
