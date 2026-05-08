@@ -1,50 +1,75 @@
 package dev.lapis256.mekanism_empowered.integration.mods
 
 import com.jerry.mekanism_extras.common.util.ExtraEnumUtils
-import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.ITEM_IN_OUT_MACHINE_UPGRADES
-import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil
+import dev.lapis256.mekanism_empowered.common.factory.FactoryBlockResolver
+import dev.lapis256.mekanism_empowered.common.factory.FactoryBlockResolverRegistry
+import dev.lapis256.mekanism_empowered.common.factory.MekanismFactoryTypeKeys
+import dev.lapis256.mekanism_empowered.common.factory.mekanismFactoryTypeSuppliers
 import dev.lapis256.mekanism_empowered.integration.ModIntegration
 import fr.iglee42.evolvedmekanism.registries.EMFactoryType
 import io.github.masyumero.emextras.common.content.blocktype.EMExtraFactoryType
 import io.github.masyumero.emextras.common.registry.EMExtrasBlockType
 import io.github.masyumero.emextras.common.util.EMExtraEnumUtils
-import mekanism.api.Upgrade
-import mekanism.common.content.blocktype.FactoryType
 import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 
 
 internal object EvoMekExt : ModIntegration {
     override val modId = "emextras"
 
+    private val emExtraFactoryResolver by lazy {
+        FactoryBlockResolver(
+            name = "$modId:emextra",
+            types = mapOf(
+                MekanismFactoryTypeKeys.SMELTING to { EMExtraFactoryType.SMELTING },
+                MekanismFactoryTypeKeys.ENRICHING to { EMExtraFactoryType.ENRICHING },
+                MekanismFactoryTypeKeys.CRUSHING to { EMExtraFactoryType.CRUSHING },
+                MekanismFactoryTypeKeys.COMPRESSING to { EMExtraFactoryType.COMPRESSING },
+                MekanismFactoryTypeKeys.COMBINING to { EMExtraFactoryType.COMBINING },
+                MekanismFactoryTypeKeys.PURIFYING to { EMExtraFactoryType.PURIFYING },
+                MekanismFactoryTypeKeys.INJECTING to { EMExtraFactoryType.INJECTING },
+                MekanismFactoryTypeKeys.INFUSING to { EMExtraFactoryType.INFUSING },
+                MekanismFactoryTypeKeys.SAWING to { EMExtraFactoryType.SAWING },
+                EvoMek.FactoryTypeKeys.ALLOYING to { EMExtraFactoryType.ALLOYING },
+            ),
+            tiers = { EMExtraEnumUtils.EMEXTRA_FACTORY_TIERS.asIterable() },
+            resolver = { tier, type -> EMExtrasBlockType.getEMExtraFactory(tier, type) },
+        )
+    }
+
+    private val extraFactoryResolver by lazy {
+        FactoryBlockResolver(
+            name = "$modId:mekanism_extras",
+            types = mekanismFactoryTypeSuppliers + (EvoMek.FactoryTypeKeys.ALLOYING to { EMFactoryType.ALLOYING }),
+            tiers = { ExtraEnumUtils.ADVANCED_FACTORY_TIERS.asIterable() },
+            resolver = { tier, type -> EMExtrasBlockType.getAdvancedFactory(tier, type) },
+        )
+    }
+
+//    private val emExtraAdvancedFactoryResolver by lazy {
+//        FactoryBlockResolver(
+//            name = "$modId:advanced",
+//            types = MekMM.advancedFactoryTypes,
+//            tiers = { EMExtraEnumUtils.EMEXTRA_FACTORY_TIERS.asIterable() },
+//            resolver = { tier, type -> EMExtraAdvancedFactoryBlockTypes.getEMExtraAdvancedFactory(tier, type) },
+//        )
+//    }
+//
+//    private val emExtraMoreMachineFactoryResolver by lazy {
+//        FactoryBlockResolver(
+//            name = "$modId:more_machine",
+//            types = MekMM.moreMachineFactoryTypes,
+//            tiers = { EMExtraEnumUtils.EMEXTRA_FACTORY_TIERS.asIterable() },
+//            resolver = { tier, type -> EMExtraMoreMachineBlockTypes.getEMExtraMoreMachineFactory(tier, type) },
+//        )
+//    }
+
     override fun initCommon(modEventBus: IEventBus) {
-        modEventBus.addListener { _: FMLCommonSetupEvent -> addSupportedFactoryUpgrades() }
-    }
+        FactoryBlockResolverRegistry.register(emExtraFactoryResolver)
+        FactoryBlockResolverRegistry.register(extraFactoryResolver)
 
-    private fun addSupportedFactoryUpgrades() {
-        addSupportedFactoryUpgrades(EMExtraFactoryType.ALLOYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-
-        addSupportedFactoryUpgrades(EMExtraFactoryType.ENRICHING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.CRUSHING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.SMELTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.SAWING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.COMPRESSING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.COMBINING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.INFUSING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.PURIFYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMExtraFactoryType.INJECTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-        addSupportedFactoryUpgrades(EMFactoryType.ALLOYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
-    }
-
-    private fun addSupportedFactoryUpgrades(type: EMExtraFactoryType, vararg upgrades: Upgrade) {
-        for (tier in EMExtraEnumUtils.EMEXTRA_FACTORY_TIERS) {
-            AdditionalUpgradeUtil.addSupported(EMExtrasBlockType.getEMExtraFactory(tier, type), *upgrades)
-        }
-    }
-
-    private fun addSupportedFactoryUpgrades(type: FactoryType, vararg upgrades: Upgrade) {
-        for (tier in ExtraEnumUtils.ADVANCED_FACTORY_TIERS) {
-            AdditionalUpgradeUtil.addSupported(EMExtrasBlockType.getAdvancedFactory(tier, type), *upgrades)
-        }
+//        if (MekMM.isLoaded) {
+//            FactoryBlockResolverRegistry.register(emExtraAdvancedFactoryResolver)
+//            FactoryBlockResolverRegistry.register(emExtraMoreMachineFactoryResolver)
+//        }
     }
 }

@@ -12,7 +12,8 @@ internal object Integrations {
         EvoMekExt,
         MekElm,
         MekExt,
-        MekMM
+        MekGen,
+        MekMM,
     )
 
     private val integrationProviders: MutableMap<IntegrationProviderName, MutableSet<IntegrationProvider>> = mutableMapOf()

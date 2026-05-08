@@ -12,7 +12,6 @@ import mekanism.common.lib.Version
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.fml.DistExecutor
 import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,12 +22,10 @@ class MekanismEmpowered(context: FMLJavaModLoadingContext) {
     init {
         MekEmpConfig.registerConfigs(context)
 
+        MekEmpUpgrades.registerSupportedUpgrades()
         MekEmpUpgrades.registerUpgradeInfo()
 
         val modEventBus = context.modEventBus
-        modEventBus.addListener { _: FMLCommonSetupEvent -> MekEmpUpgrades.registerSupportedUpgrades() }
-
-
         modEventBus.addListener(MekEmpConfig::onConfigLoad)
 
         MekEmpItems.REGISTRY.register(modEventBus)
