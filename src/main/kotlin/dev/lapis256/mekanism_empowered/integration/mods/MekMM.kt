@@ -2,7 +2,9 @@ package dev.lapis256.mekanism_empowered.integration.mods
 
 import com.jerry.mekaf.common.content.blocktype.AdvancedFactoryType
 import com.jerry.mekaf.common.registries.AdvancedFactoryBlockTypes
-import com.jerry.meklm.api.INeedConfig
+import com.jerry.meklg.common.tile.TileEntityMoreGenerator
+import com.jerry.meklm.api.INotNeedConfig
+import com.jerry.meklm.common.registries.LargeMachineBlockTypes
 import com.jerry.mekmm.common.content.blocktype.MoreMachineFactoryType
 import com.jerry.mekmm.common.registries.MoreMachineBlockTypes
 import dev.lapis256.mekanism_empowered.api.MekEmpUpgrade
@@ -14,6 +16,7 @@ import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.ITEM_INPUT_MAC
 import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.ITEM_IN_OUT_MACHINE_UPGRADES
 import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.ITEM_OUTPUT_MACHINE_UPGRADES
 import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.MACHINE_UPGRADES
+import dev.lapis256.mekanism_empowered.common.init.MekEmpUpgrades.SPEED_AND_ENERGY_UPGRADES
 import dev.lapis256.mekanism_empowered.core.common.util.AdditionalUpgradeUtil.addDeferredSupported
 import dev.lapis256.mekanism_empowered.core.common.util.TileUpgradeSupportFallbackRegistry
 import dev.lapis256.mekanism_empowered.integration.ModIntegration
@@ -30,9 +33,11 @@ internal object MekMM : ModIntegration {
         val OXIDIZING = FactoryTypeKey.of(modId, "oxidizing")
         val DISSOLVING = FactoryTypeKey.of(modId, "dissolving")
         val CRYSTALLIZING = FactoryTypeKey.of(modId, "crystallizing")
-        val CHEMICAL_INFUSING = FactoryTypeKey.of(modId, "chemical_infusing")
         val WASHING = FactoryTypeKey.of(modId, "washing")
         val CENTRIFUGING = FactoryTypeKey.of(modId, "centrifuging")
+        val PAINTING = FactoryTypeKey.of(modId, "painting")
+        val PIGMENT_EXTRACTING = FactoryTypeKey.of(modId, "pigment_extracting")
+
         val RECYCLING = FactoryTypeKey.of(modId, "recycling")
         val PLANTING_STATION = FactoryTypeKey.of(modId, "planting_station")
         val CNC_STAMPING = FactoryTypeKey.of(modId, "cnc_stamping")
@@ -48,9 +53,10 @@ internal object MekMM : ModIntegration {
             FactoryTypeKeys.OXIDIZING to { AdvancedFactoryType.OXIDIZING },
             FactoryTypeKeys.DISSOLVING to { AdvancedFactoryType.DISSOLVING },
             FactoryTypeKeys.CRYSTALLIZING to { AdvancedFactoryType.CRYSTALLIZING },
-            FactoryTypeKeys.CHEMICAL_INFUSING to { AdvancedFactoryType.CHEMICAL_INFUSING },
             FactoryTypeKeys.WASHING to { AdvancedFactoryType.WASHING },
             FactoryTypeKeys.CENTRIFUGING to { AdvancedFactoryType.CENTRIFUGING },
+            FactoryTypeKeys.PAINTING to { AdvancedFactoryType.PAINTING },
+            FactoryTypeKeys.PIGMENT_EXTRACTING to { AdvancedFactoryType.PIGMENT_EXTRACTING },
         )
     }
 
@@ -95,9 +101,7 @@ internal object MekMM : ModIntegration {
         )
 
         TileUpgradeSupportFallbackRegistry.registerUnsupportedUpgradePredicate { tile, upgrade ->
-            (tile as? INeedConfig)?.let {
-                !it.needConfig() && unsupported.contains(upgrade)
-            } ?: false
+            (tile is INotNeedConfig || tile is TileEntityMoreGenerator) && unsupported.contains(upgrade)
         }
 
         registerSupportedUpgrades()
@@ -106,13 +110,14 @@ internal object MekMM : ModIntegration {
     private fun registerSupportedUpgrades() {
         addDeferredSupportedForFactory(FactoryTypeKeys.PRESSURISED_REACTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.LIQUIFYING, *ITEM_IN_OUT_MACHINE_UPGRADES)
+        addDeferredSupportedForFactory(FactoryTypeKeys.PAINTING, *ITEM_IN_OUT_MACHINE_UPGRADES)
 
         addDeferredSupportedForFactory(FactoryTypeKeys.OXIDIZING, *ITEM_INPUT_MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.DISSOLVING, *ITEM_INPUT_MACHINE_UPGRADES)
+        addDeferredSupportedForFactory(FactoryTypeKeys.PIGMENT_EXTRACTING, *ITEM_INPUT_MACHINE_UPGRADES)
 
         addDeferredSupportedForFactory(FactoryTypeKeys.CRYSTALLIZING, *ITEM_OUTPUT_MACHINE_UPGRADES)
 
-        addDeferredSupportedForFactory(FactoryTypeKeys.CHEMICAL_INFUSING, *MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.WASHING, *MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.CENTRIFUGING, *MACHINE_UPGRADES)
 
@@ -131,5 +136,11 @@ internal object MekMM : ModIntegration {
         addDeferredSupportedForFactory(FactoryTypeKeys.CNC_LATHING, *ITEM_IN_OUT_MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.CNC_ROLLING_MILL, *ITEM_IN_OUT_MACHINE_UPGRADES)
         addDeferredSupportedForFactory(FactoryTypeKeys.REPLICATING, *ITEM_IN_OUT_MACHINE_UPGRADES)
+
+        addDeferredSupported({ LargeMachineBlockTypes.LARGE_ROTARY_CONDENSENTRATOR }, *SPEED_AND_ENERGY_UPGRADES)
+        addDeferredSupported({ LargeMachineBlockTypes.LARGE_CHEMICAL_INFUSER }, *SPEED_AND_ENERGY_UPGRADES)
+        addDeferredSupported({ LargeMachineBlockTypes.LARGE_ELECTROLYTIC_SEPARATOR }, *SPEED_AND_ENERGY_UPGRADES)
+        addDeferredSupported({ LargeMachineBlockTypes.LARGE_SOLAR_NEUTRON_ACTIVATOR }, MekEmpUpgrade.EMPOWERED_SPEED)
+        addDeferredSupported({ LargeMachineBlockTypes.LARGE_PIGMENT_MIXER }, *SPEED_AND_ENERGY_UPGRADES)
     }
 }
