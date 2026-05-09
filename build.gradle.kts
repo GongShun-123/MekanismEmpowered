@@ -106,6 +106,18 @@ val dataSourceSet: SourceSet = sourceSets.create("data", Action {
     runtimeClasspath += coreSourceSet.output + mainSourceSet.runtimeClasspath + mainSourceSet.output
 })
 
+java {
+    registerFeature("coreApi") {
+        usingSourceSet(coreApiSourceSet)
+    }
+    registerFeature("mainApi") {
+        usingSourceSet(mainApiSourceSet)
+    }
+    registerFeature("core") {
+        usingSourceSet(coreSourceSet)
+    }
+}
+
 mixin {
     add(mainSourceSet, "${modId}.refmap.json")
     add(coreSourceSet, "${modId}_core.refmap.json")
@@ -301,7 +313,8 @@ fun setupJarTask(
     task: TaskProvider<Jar>,
     classifier: String? = null,
     sourceSet: SourceSet,
-    additionalSourceSets: List<SourceSet> = emptyList()
+    additionalSourceSets: List<SourceSet> = emptyList(),
+    includesOwnOutput: Boolean = false
 ) {
     val cleanModName = modName.replace(" ", "").replace(":", "")
     val newName = "$cleanModName-$mcVersion-${project.version}.jar"
@@ -327,7 +340,12 @@ fun setupJarTask(
         if (renameFile) {
             archiveFileName.set(newName)
         }
-        from(sourceSet.output, additionalSourceSets.map { it.output }.toTypedArray())
+        if (!includesOwnOutput) {
+            from(sourceSet.output)
+        }
+        additionalSourceSets.forEach {
+            from(it.output)
+        }
     }
 
     if (sourceSet.name != "main") {
@@ -421,19 +439,21 @@ tasks {
         "${Constants.Mod.NAME} Core",
         Constants.Mod.ID + "_core",
         true,
-        register<Jar>("coreJar"),
+        named<Jar>("coreJar"),
         "core",
         coreSourceSet,
-        listOf(coreApiSourceSet)
+        listOf(coreApiSourceSet),
+        includesOwnOutput = true
     )
 
     setupJarTask(
         "${Constants.Mod.NAME} Core",
         Constants.Mod.ID + "_core",
         false,
-        register<Jar>("coreApiJar"),
+        named<Jar>("coreApiJar"),
         "core-api",
-        coreApiSourceSet
+        coreApiSourceSet,
+        includesOwnOutput = true
     )
 
     build {
