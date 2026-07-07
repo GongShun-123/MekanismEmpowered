@@ -33,7 +33,9 @@ val jvmVendor = Constants.Dev.JVM_VENDOR
 
 
 val exportMixin = true
-val loadAddons = true
+val loadAddons = providers.gradleProperty("loadAddons")
+    .map(String::toBoolean)
+    .getOrElse(true)
 
 
 base {
