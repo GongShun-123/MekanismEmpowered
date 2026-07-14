@@ -1,11 +1,11 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import net.darkhax.curseforgegradle.UploadArtifact
+//import net.darkhax.curseforgegradle.TaskPublishCurseForge
+//import net.darkhax.curseforgegradle.UploadArtifact
 import net.neoforged.moddevgradle.internal.RunGameTask
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.slf4j.event.Level
 import java.text.SimpleDateFormat
 import java.util.*
-import net.darkhax.curseforgegradle.Constants as CFGConstants
+//import net.darkhax.curseforgegradle.Constants as CFGConstants
 
 
 plugins {
@@ -19,8 +19,8 @@ plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.moddev)
-    alias(libs.plugins.curseForge)
-    alias(libs.plugins.modrinth)
+    //alias(libs.plugins.curseForge)
+    //alias(libs.plugins.modrinth)
 }
 
 val modId = Constants.Mod.ID
@@ -477,44 +477,6 @@ tasks {
         destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
     }
 
-    register<TaskPublishCurseForge>("curseforge") {
-        group = "publishing"
-        description = "Upload to CurseForge"
-        apiToken = System.getenv("CURSE_TOKEN")
-        debugMode = System.getenv("PUBLISHER_DEBUG") == "true"
-
-        disableVersionDetection()
-
-        fun UploadArtifact.setShared() {
-            releaseType = CFGConstants.RELEASE_TYPE_RELEASE
-            changelog = System.getenv("CHANGELOG") ?: "No changelog provided"
-            changelogType = CFGConstants.CHANGELOG_MARKDOWN
-            displayName = "[$mcVersion] v${project.version}"
-            addGameVersion(mcVersion)
-            addEnvironment("Client", "Server")
-            addModLoader("Forge")
-            addJavaVersion("Java $jdkVersion")
-
-            addRequirement("kotlin-for-forge", "mekanism")
-        }
-
-        upload(Constants.Publisher.CURSEFORGE_MAIN_ID, named("reobfJar")) {
-            setShared()
-
-            addRequirement("mekanism-empowered-core")
-            addOptional("mekanism-extras")
-            addOptional("evolved-mekanism")
-            addOptional("mekanism-elements")
-            addOptional("evolved-mekanism-extras")
-            addOptional("mekanism-more-machine")
-            addIncompatibility("mekanism-tweaks")
-            addIncompatibility("mekanism-upgrades-reborn")
-        }
-
-        upload(Constants.Publisher.CURSEFORGE_CORE_ID, named("reobfCoreJar")) {
-            setShared()
-        }
-    }
 }
 
 idea {
